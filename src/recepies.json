@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "name": "Espresso",
+    "difficulty": "Easy",
+    "ingredients": ["grinded coffee", "hot water"],
+    "steps": ["first step", "second step"]
+  },
+  {
+    "id": "2",
+    "name": "Cappuccino",
+    "difficulty": "Medium",
+    "ingredients": ["grinded coffee", "hot water"],
+    "steps": ["first step", "second step"]
+  },
+  {
+    "id": "3",
+    "name": "Latte",
+    "difficulty": "Medium",
+    "ingredients": ["grinded coffee", "hot water"],
+    "steps": ["first step", "second step"]
+  },
+  {
+    "id": "4",
+    "name": "Egg Yolk Espresso",
+    "difficulty": "Easy",
+    "ingredients": ["grinded coffee", "hot water"],
+    "steps": ["first step", "second step"]
+  },
+  {
+    "id": "5",
+    "name": "Mint Mocaccino",
+    "difficulty": "Easy",
+    "ingredients": ["grinded coffee", "hot water"],
+    "steps": ["first step", "second step"]
+  }
+]
