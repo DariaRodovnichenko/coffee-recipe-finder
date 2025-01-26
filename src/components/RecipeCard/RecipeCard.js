@@ -1,12 +1,18 @@
 import { ImCancelCircle } from "react-icons/im";
 
-import { Wrapper, RecipeName, MetaWrapper, CloseBtn } from "./RecipeCard.styled";
+import {
+  Wrapper,
+  RecipeName,
+  MetaWrapper,
+  CloseBtn,
+} from "./RecipeCard.styled";
 
 export const RecipeCard = ({
-  recipe: { name, difficulty, ingredients, steps },
+  recipe: { id, name, difficulty, ingredients, steps },
+  onDelete,
 }) => {
   return (
-    <Wrapper difficulty={difficulty}>
+    <Wrapper $difficulty={difficulty}>
       <CloseBtn>
         <ImCancelCircle />
       </CloseBtn>
@@ -26,6 +32,7 @@ export const RecipeCard = ({
           ))}
         </ol>
         <button>Add to favorites</button>
+        <button onClick={() => onDelete(id)}>Delete from favorites</button>
       </MetaWrapper>
     </Wrapper>
   );

@@ -1,13 +1,12 @@
 import styled from "styled-components";
 
 const getBorderColor = (p) => {
-  console.log(p);
-  switch (p.difficulty) {
-    case "Easy":
+  switch (p.$difficulty) {
+    case "easy":
       return "green";
-    case "Medium":
+    case "medium":
       return "orange";
-    case "Hard":
+    case "hard":
       return "red";
     default:
       return p.theme.colors.black;
@@ -38,9 +37,9 @@ export const CloseBtn = styled.button`
   border: none;
   border-radius: 90px;
 
-:hover {
+  :hover {
     color: red;
-}
+  }
 
   svg {
     display: block;
