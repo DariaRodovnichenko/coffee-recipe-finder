@@ -3,15 +3,18 @@ import { SearchBar } from "./SearchBar/SearchBar";
 import { RecipeForm } from "./RecipeForm/RecipeForm";
 
 import { GlobalStyle } from "./GlobalStyles";
+import { Loader } from "./Loader/Loader";
+import toast, { Toaster } from "react-hot-toast";
 import { Layout } from "./Layout/Layout.styled";
 import { Component } from "react";
-// import { nanoid } from "nanoid";
-import { ref, get, push } from "firebase/database";
+import { ref, onValue, push, remove } from "firebase/database";
 import { database } from "./firebase"; // Import the initialized Firebase app
 
 export class App extends Component {
   state = {
     recipeItems: [],
+    loading: false,
+    error: false,
     filters: {
       method: "",
       year: "all",
@@ -22,25 +25,31 @@ export class App extends Component {
 
   // Fetch data from Firebase when the component mounts
   componentDidMount() {
+    this.setState({ loading: true, error: false });
+
     const recipeRef = ref(database, "recipes");
 
-    // Get all the recipes from Firebase
-    get(recipeRef)
-      .then((snapshot) => {
+    onValue(
+      recipeRef,
+      (snapshot) => {
         if (snapshot.exists()) {
           const recipesData = snapshot.val();
           const recipesArray = Object.keys(recipesData).map((key) => ({
             id: key,
             ...recipesData[key],
           }));
-          this.setState({ recipeItems: recipesArray });
+
+          this.setState({ recipeItems: recipesArray, loading: false });
         } else {
-          console.log("No recipes found.");
+          this.setState({ recipeItems: [], loading: false });
         }
-      })
-      .catch((error) => {
+      },
+      (error) => {
+        this.setState({ error: true });
         console.error("Error fetching data from Firebase: ", error);
-      });
+        this.setState({ loading: false });
+      }
+    );
 
     const savedFilters = localStorage.getItem("recipe-filters");
     if (savedFilters !== null) {
@@ -57,29 +66,46 @@ export class App extends Component {
     }
   }
 
-  addRecipe = (newRecipe) => {
-    // Reference to the "recipes" node in the database
+  addRecipe = async (newRecipe) => {
     const recipesRef = ref(database, "recipes");
 
-    // Use `push` to automatically generate a unique ID for the new recipe
-    push(recipesRef, newRecipe)
-      .then(() => {
-        // Optionally update the state with the new recipe to reflect the change in the UI
-        this.setState((prevState) => ({
-          recipeItems: [...prevState.recipeItems, newRecipe],
-        }));
-      })
-      .catch((error) => {
-        console.error("Error adding recipe: ", error);
-      });
+    try {
+      this.setState({ loading: true, error: false });
+      const newRecipeRef = await push(recipesRef, newRecipe);
+      const newRecipeId = newRecipeRef.key; // Get the generated ID
+
+      // Update state with the recipe including its Firebase ID
+      this.setState((prevState) => ({
+        recipeItems: [
+          ...prevState.recipeItems,
+          { id: newRecipeId, ...newRecipe },
+        ],
+      }));
+    } catch (error) {
+      this.setState({ error: true });
+      console.error("Error adding recipe: ", error);
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
-  deleteRecipe = (recipeId) => {
-    this.setState((prevState) => ({
-      recipeItems: prevState.recipeItems.filter(
-        (recipe) => recipe.id !== recipeId
-      ),
-    }));
+  deleteRecipe = async (recipeId) => {
+    const recipeRef = ref(database, `recipes/${recipeId}`);
+
+    try {
+      this.setState({ loading: true, error: false });
+      await remove(recipeRef); // Delete from Firebase
+      this.setState((prevState) => ({
+        recipeItems: prevState.recipeItems.filter(
+          (recipe) => recipe.id !== recipeId
+        ),
+      }));
+      toast.success("Delete successful!");
+    } catch (error) {
+      console.error("Error deleting recipe: ", error);
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
   changeYearFilter = (newYear) => {
@@ -159,7 +185,8 @@ export class App extends Component {
   };
 
   render() {
-    const { filters, recipeItems, itemsPerPage, currentPage } = this.state;
+    const { filters, recipeItems, itemsPerPage, currentPage, loading, error } =
+      this.state;
     const visibleRecipes = this.getVisibleRecipeItems();
 
     const totalFilteredItems = recipeItems.filter((recipe) => {
@@ -187,9 +214,16 @@ export class App extends Component {
           onReset={this.resetFilters}
           onSearch={this.handleSearch} // Pass handleSearch to SearchBar
         />
-        <RecipeList items={visibleRecipes} onDelete={this.deleteRecipe} />
+
+        {loading && <Loader />}
+        {error && !loading && <div>OOPS! An ERROR!!!</div>}
+        {visibleRecipes.length > 0 && (
+          <RecipeList items={visibleRecipes} onDelete={this.deleteRecipe} />
+        )}
+
         {hasMore && <button onClick={this.handleLoadMore}>Load more</button>}
         <GlobalStyle />
+        <Toaster />
       </Layout>
     );
   }

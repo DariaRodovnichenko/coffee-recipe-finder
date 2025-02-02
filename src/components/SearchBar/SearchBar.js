@@ -34,8 +34,8 @@ export const SearchBar = ({
           <option value="2022">2022</option>
         </select>
         <button type="submit">Search</button>
+        <button onClick={onReset}>Reset filters</button>
       </form>
-      <button onClick={onReset}>Reset filters</button>
     </div>
   );
 };
