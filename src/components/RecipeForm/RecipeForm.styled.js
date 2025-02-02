@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Form, Field } from "formik";
+import { Form, Field, ErrorMessage } from "formik";
 
 export const StyledForm = styled(Form)`
   border-radius: 4px;
@@ -12,4 +12,9 @@ export const StyledForm = styled(Form)`
 
 export const StyledField = styled(Field)`
   padding: 4px;
+`;
+
+export const ErrorMsg = styled(ErrorMessage)`
+  font-size: 14px;
+  color: red;
 `;

@@ -1,42 +1,76 @@
-[
-  {
-    "id": "1",
-    "name": "Espresso",
-    "method": "espresso",
-    "difficulty": "easy",
-    "ingredients": ["grinded coffee", "hot water"],
-    "steps": ["first step", "second step"]
-  },
-  {
-    "id": "2",
-    "name": "Cappuccino",
-    "method": "milk",
-    "difficulty": "medium",
-    "ingredients": ["grinded coffee", "hot water"],
-    "steps": ["first step", "second step"]
-  },
-  {
-    "id": "3",
-    "name": "Latte",
-    "method": "milk",
-    "difficulty": "medium",
-    "ingredients": ["grinded coffee", "hot water"],
-    "steps": ["first step", "second step"]
-  },
-  {
-    "id": "4",
-    "name": "Egg Yolk Espresso",
-    "method": "espresso",
-    "difficulty": "easy",
-    "ingredients": ["grinded coffee", "hot water"],
-    "steps": ["first step", "second step"]
-  },
-  {
-    "id": "5",
-    "name": "Mint Mocaccino",
-    "method": "milk",
-    "difficulty": "hard",
-    "ingredients": ["grinded coffee", "hot water"],
-    "steps": ["first step", "second step"]
+{
+  "recipes": {
+    "1": {
+      "id": "1",
+      "name": "Martin Wölfl",
+      "country": "Austria",
+      "year": "2024",
+      "method": "Orea with fast bottom + melodrip",
+      "beans": "Panama Geisha",
+      "grinder": "Mazzer ZM 490µm | Comandante C40 21~25 clicks",
+      "filter": "Sibarist fast paper filter",
+      "ingredients": "17g of coffee, 270ml 93° water",
+      "steps": "Rinse the paper filter, Preheat brewing device and a server, Use the negotiator to ensure the filter sits perfectly at the wall, Even grinded coffee in the dripper, Use a needling tool,Use the melodrip during the whole process, Blooming: 60ml 40sec, Second pour 60ml at 40sec, Third pour 50ml at 1min20, Last pour 100ml at 2min"
+    },
+    "2": {
+      "id": "2",
+      "name": "Wataru Iidaka",
+      "country": "Japan",
+      "year": "2024",
+      "method": "",
+      "beans": "Panama Geisha Natural, Honey",
+      "grinder": "",
+      "filter": "",
+      "ingredients": "Grinded coffee, Hot water",
+      "steps": "First step, Second step"
+    },
+    "3": {
+      "id": "3",
+      "name": "Rayan Wibawa",
+      "country": "Indonesia",
+      "year": "2024",
+      "method": "",
+      "beans": "Panama Geisha Natural, Colombia Ombligon Thermal Shock, Indonesia Excelsa Mossto Anaerobic Natural",
+      "grinder": "",
+      "filter": "",
+      "ingredients": "Grinded coffee, hot water",
+      "steps": "First step, second step"
+    },
+    "4": {
+      "id": "4",
+      "name": "Tom Hutchins",
+      "country": "Australia",
+      "year": "2024",
+      "method": "",
+      "beans": "",
+      "grinder": "",
+      "filter": "",
+      "ingredients": "Grinded coffee, hot water",
+      "steps": "First step, second step"
+    },
+    "5": {
+      "id": "5",
+      "name": "Charity Cheung",
+      "country": "France",
+      "year": "2024",
+      "method": "",
+      "beans": "",
+      "grinder": "",
+      "filter": "",
+      "ingredients": "Grinded coffee, hot water",
+      "steps": "First step, second step"
+    },
+    "6": {
+      "id": "6",
+      "name": "Jackie Tran",
+      "country": "Czech Republic",
+      "year": "2024",
+      "method": "",
+      "beans": "Panama Geisha Controlled Natural",
+      "grinder": "",
+      "filter": "",
+      "ingredients": "Grinded coffee, hot water",
+      "steps": "First step, second step"
+    }
   }
-]
+}

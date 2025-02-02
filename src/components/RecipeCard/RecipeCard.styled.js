@@ -1,21 +1,8 @@
 import styled from "styled-components";
 
-const getBorderColor = (p) => {
-  switch (p.$difficulty) {
-    case "easy":
-      return "green";
-    case "medium":
-      return "orange";
-    case "hard":
-      return "red";
-    default:
-      return p.theme.colors.black;
-  }
-};
-
 export const Wrapper = styled.div`
   padding: 4px;
-  border: 2px solid ${getBorderColor};
+  border: 2px solid black;
   border-radius: ${(p) => p.theme.radii.md};
 `;
 

@@ -7,5 +7,5 @@ export const List = styled.ul`
 `;
 
 export const ListItem = styled.li`
-  width: 240px;
+  width: 420px;
 `;

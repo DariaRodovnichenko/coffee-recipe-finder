@@ -12,8 +12,12 @@ ul {
     padding: 0;
 }
 
-img{
+img {
     display: block;
     max-width: 100%;
     object-fit: cover;
+}
+
+p {
+    margin: 0;
 }`;
