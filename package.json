@@ -1,11 +1,15 @@
 {
   "name": "coffee-recipe-finder",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "cra-template": "1.2.0",
+    "dotenv": "^16.4.7",
     "firebase": "^11.2.0",
+    "firebase-admin": "^13.1.0",
+    "firebase-functions": "^6.3.2",
     "formik": "^2.4.6",
     "loader": "^2.1.1",
     "modern-normalize": "^3.0.1",
@@ -15,7 +19,11 @@
     "react-hot-toast": "^2.5.1",
     "react-icons": "^5.4.0",
     "react-loader-spinner": "^6.1.6",
+    "react-modal": "^3.16.3",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
+    "redux": "^5.0.1",
     "spinner": "^0.3.4",
     "styled-components": "^6.1.14",
     "web-vitals": "^4.2.4",
@@ -46,6 +54,10 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@reduxjs/toolkit": "^2.5.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "jest": "^27.5.1"
   }
 }

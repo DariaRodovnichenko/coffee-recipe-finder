@@ -1,6 +1,7 @@
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { StyledField, StyledForm, ErrorMsg } from "./RecipeForm.styled";
+import { StyledField, StyledForm, ErrorMsg } from "./RecipeForm.styled.js";
+import { useUserData } from "../../hooks/useUserData.js";
 
 const RecipeSchema = Yup.object().shape({
   name: Yup.string()
@@ -23,23 +24,23 @@ const RecipeSchema = Yup.object().shape({
     .required("Required"),
 });
 
-export const RecipeForm = ({ onAdd }) => {
+export const RecipeForm = () => {
+  const { addUserRecipe } = useUserData();
+
   return (
     <Formik
       initialValues={{
         name: "",
         method: "",
-        year: "",
         beans: "",
         grinder: "",
         filter: "",
         ingredients: "",
         steps: "",
       }}
-      
       validationSchema={RecipeSchema}
       onSubmit={(values, actions) => {
-        // Prepare ingredients and steps as comma-separated strings for Firebase
+        // ✅ Prepare recipe and add it to the user's recipes
         const newRecipe = {
           ...values,
           ingredients: values.ingredients
@@ -51,7 +52,8 @@ export const RecipeForm = ({ onAdd }) => {
             .map((item) => item.trim())
             .join(","),
         };
-        onAdd(newRecipe);
+
+        addUserRecipe(newRecipe);
         actions.resetForm();
       }}
     >
@@ -88,22 +90,10 @@ export const RecipeForm = ({ onAdd }) => {
             value={values.beans}
           />
 
-          {/* <StyledField
-            as="select"
-            name="year"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.year}
-          >
-            <option value="">Select Year</option>
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
-            <option value="2022">2022</option>
-          </StyledField> */}
           {/* {errors.year && touched.year ? (
             <div>{errors.year}</div>
           ) : null} */}
-          <ErrorMsg name="year" component="div" />
+          {/* <ErrorMsg name="year" component="div" /> */}
 
           <StyledField
             name="grinder"
@@ -118,7 +108,7 @@ export const RecipeForm = ({ onAdd }) => {
           <StyledField
             name="filter"
             type="text"
-            placeholder="Filer type"
+            placeholder="Filter type"
             onChange={handleChange}
             onBlur={handleBlur}
             value={values.filter}

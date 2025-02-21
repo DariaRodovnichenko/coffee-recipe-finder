@@ -1,11 +1,10 @@
-export const SearchBar = ({
-  year,
-  method,
-  onChangeYear,
-  onChangeMethod,
-  onReset,
-  onSearch, // Add onSearch prop to handle search
-}) => {
+import { useQueryParams } from "../../hooks/useQueryParams.js";
+import { MethodFilter } from "../MethodFilter.js";
+import { YearFilter } from "../YearFilter.js";
+
+export const SearchBar = ({ onSearch }) => {
+  const { resetFilters } = useQueryParams();
+
   const handleSearch = (e) => {
     e.preventDefault(); // Prevent page reload
     onSearch(); // Call the onSearch handler when the button is clicked
@@ -13,29 +12,14 @@ export const SearchBar = ({
 
   return (
     <div>
-      <form onSubmit={handleSearch}>
-        <input
-          type="text"
-          value={method}
-          onChange={(e) => {
-            onChangeMethod(e.target.value);
-          }}
-          placeholder="Recipe Finder"
-        />
-        <select
-          value={year}
-          onChange={(e) => {
-            onChangeYear(e.target.value);
-          }}
-        >
-          <option value="all">All</option>
-          <option value="2024">2024</option>
-          <option value="2023">2023</option>
-          <option value="2022">2022</option>
-        </select>
-        <button type="submit">Search</button>
-        <button onClick={onReset}>Reset filters</button>
-      </form>
+      <MethodFilter />
+      <YearFilter />
+      <button type="button" onClick={handleSearch}>
+        Search
+      </button>
+      <button type="button" onClick={resetFilters}>
+        Reset filters
+      </button>
     </div>
   );
 };
