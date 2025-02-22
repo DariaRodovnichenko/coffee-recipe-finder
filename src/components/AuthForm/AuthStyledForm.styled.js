@@ -66,3 +66,18 @@ export const LogInBtn = styled.button`
 export const GoogleSignInBtn = styled.button``;
 
 export const ToggleFormBtn = styled.button``;
+
+export const PasswordWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+export const TogglePasswordBtn = styled.button`
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+`;

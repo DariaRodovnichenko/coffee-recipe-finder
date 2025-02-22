@@ -13,8 +13,7 @@ CardModal.setAppElement("#root"); // Necessary for accessibility
 
 export const RecipeCard = ({ recipe = {}, onDelete }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const { addToFavorites, removeRecipe } = useUserData();
+  const { addToFavorites, removeRecipe, userData } = useUserData();
 
   const {
     id,
@@ -34,9 +33,30 @@ export const RecipeCard = ({ recipe = {}, onDelete }) => {
     : [];
   const stepsArray = steps ? steps.split(",").map((item) => item.trim()) : [];
 
-  const handleRemoveRecipe = async (recipeId) => {
-    await removeRecipe(recipeId); // Remove the recipe from the database
-    setModalIsOpen(false); // Close the modal immediately after deletion
+  // ✅ Check if the recipe is in user's favorites
+  const isFavorite = userData?.favorites && Object.values(userData.favorites).some((fav) => fav.id === id);
+
+  // ✅ Check if the recipe is created by the user
+  const isCreatedByUser = userData?.createdRecipes && Object.values(userData.createdRecipes).some((rec) => rec.id === id);
+
+  // ✅ Toggle favorite status and close modal
+  const handleToggleFavorite = async () => {
+    if (isFavorite) {
+      await removeRecipe(id, true); // Remove from favorites
+    } else {
+      await addToFavorites(recipe); // Add to favorites
+    }
+    setModalIsOpen(false); // ✅ Close modal after action
+  };
+
+  // ✅ Handles removing from "Created Recipes"
+  const handleRemoveRecipe = async () => {
+    if (onDelete) {
+      onDelete(id); // Use onDelete prop if provided
+    } else {
+      await removeRecipe(id); // Fallback to default removal
+    }
+    setModalIsOpen(false); // ✅ Close modal after deletion
   };
 
   return (
@@ -107,13 +127,17 @@ export const RecipeCard = ({ recipe = {}, onDelete }) => {
               </ol>
             </>
           )}
-          <button onClick={() => addToFavorites(recipe)}>
-            Add to Favorites
-          </button>
-          <button onClick={() => handleRemoveRecipe(id)}>
-            Remove Recipe
-          </button>
+
+          {/* ✅ Show Correct Button Based on Recipe Type */}
+          {!isCreatedByUser && (
+            <button onClick={handleToggleFavorite}>
+              {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+            </button>
+          )}
+
+          {isCreatedByUser && <button onClick={handleRemoveRecipe}>Remove Recipe</button>}
         </MetaWrapper>
+
         <CloseBtn onClick={() => setModalIsOpen(false)}>
           <ImCancelCircle />
         </CloseBtn>

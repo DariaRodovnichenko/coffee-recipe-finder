@@ -12,50 +12,44 @@ Modal.setAppElement("#root");
 
 export const Layout = () => {
   const { isAdmin } = useAdminStatus();
-
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false); // To toggle between login and registration
-  const firstInputRef = useRef(null); // To focus on the first input
+  const [isRegistering, setIsRegistering] = useState(false);
+  const firstInputRef = useRef(null);
   const dispatch = useDispatch();
-
-  // Access the auth state to check if there's an error or success
   const { error, user } = useSelector((state) => state.auth);
-  // Automatically focus the first input when the modal opens
+
   useEffect(() => {
     if (isLoginModalOpen) {
-      firstInputRef.current?.focus(); // Automatically focus on the first input in the modal
+      firstInputRef.current?.focus();
     }
   }, [isLoginModalOpen]);
 
   useEffect(() => {
     if (user) {
-      setIsLoginModalOpen(false); // Close modal if user is logged in
+      setIsLoginModalOpen(false);
     }
   }, [user]);
 
   return (
     <Wrapper>
       <header>
-        {/* <LangSwitcher />
-        <b>Selected lang: {lang}</b> */}
         <ul>
-          <li>
-            <StyledLink to="/create" end>
-              Create recipe
-            </StyledLink>
-          </li>
           <li>
             <StyledLink to="/recipes" end>
               Recipe list
             </StyledLink>
           </li>
-          <li>
-            <StyledLink to="/my-recipes" end>
-              My Page
-            </StyledLink>
-          </li>
 
-          {/* Show Admin link only if user is logged in and is an admin */}
+          {/* ✅ Conditionally render "My Page" only if user is logged in */}
+          {user && (
+            <li>
+              <StyledLink to="/my-recipes" end>
+                My Page
+              </StyledLink>
+            </li>
+          )}
+
+          {/* ✅ Show Admin Panel link only if user is logged in and is an admin */}
           {user && isAdmin && (
             <li>
               <StyledLink to="/admin" end>
@@ -64,13 +58,14 @@ export const Layout = () => {
             </li>
           )}
         </ul>
+        
         <LoginBtn
           onClick={() => {
             if (user) {
-              dispatch(logoutUser()); // Log out if user is logged in
-              toast.success("Successfully logged out!"); // Show logout toast
+              dispatch(logoutUser());
+              toast.success("Successfully logged out!");
             } else {
-              setIsLoginModalOpen(true); // Open login modal if user is logged out
+              setIsLoginModalOpen(true);
             }
           }}
         >
@@ -84,11 +79,9 @@ export const Layout = () => {
         onRequestClose={() => setIsLoginModalOpen(false)}
         contentLabel="Login Form"
       >
-        {/* Switch between login and registration */}
         {isRegistering ? (
           <div>
             <h2>Register</h2>
-            {/* Registration form component */}
             <AuthForm isRegistering={true} />
             <button onClick={() => setIsRegistering(false)}>
               Already have an account? Log in
@@ -97,7 +90,6 @@ export const Layout = () => {
         ) : (
           <div>
             <h2>Login</h2>
-            {/* Login form component */}
             <AuthForm isRegistering={false} />
             <button onClick={() => setIsRegistering(true)}>
               Don't have an account? Sign in!
@@ -106,10 +98,9 @@ export const Layout = () => {
         )}
 
         <button onClick={() => setIsLoginModalOpen(false)}>Close</button>
-        {/* Show error message if there's an error */}
         {error && <div style={{ color: "red" }}>{error}</div>}
       </Modal>
-      {/* Render the rest of the page */}
+
       <Outlet />
       <Toaster />
     </Wrapper>

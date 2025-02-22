@@ -2,7 +2,7 @@ import { GlobalStyle } from "./GlobalStyles.js";
 import { Toaster } from "react-hot-toast";
 import { Route, Routes, Navigate } from "react-router-dom";
 import RecipesPage from "../pages/RecipesPage.js";
-import CreateRecipePage from "../pages/CreateRecipePage.js";
+// import CreateRecipePage from "../pages/CreateRecipePage.js";
 import { AdminPanel } from "../pages/admin/AdminPanel.js"; // ✅ Admin Panel (Merged)
 import { Layout } from "./Layout/Layout.js";
 import { UserPage } from "../pages/user/UserPage.js";
@@ -27,7 +27,7 @@ export const App = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/recipes" replace />} />
           <Route path="recipes" element={<RecipesPage />} />
-          <Route path="create" element={<CreateRecipePage />} />
+          {/* <Route path="create" element={<CreateRecipePage />} /> */}
           <Route path="my-recipes" element={<UserPage />} />
 
           {/* ✅ Protected Admin Panel */}

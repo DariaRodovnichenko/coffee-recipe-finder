@@ -10,10 +10,10 @@ import {
   PlusIcon,
   RecipeFormWrapper,
 } from "./UserPage.styled.js";
+import toast from "react-hot-toast";
 
 export const UserPage = () => {
-  const { userData, setUserData, loading, removeRecipe, addUserRecipe } =
-    useUserData();
+  const { userData, setUserData, loading, removeRecipe } = useUserData();
   const [isCreating, setIsCreating] = useState(false);
 
   console.log("🔄 Rendering UserPage with userData:", userData);
@@ -22,32 +22,31 @@ export const UserPage = () => {
 
   // ✅ Function to remove a recipe and update UI immediately
   const handleRemoveRecipe = (recipeId, isFavorite = false, onCloseModal) => {
-    removeRecipe(recipeId, isFavorite, () => {
-      if (onCloseModal) onCloseModal();
+    console.log(`🗑️ Removing recipe ${recipeId}`);
 
-      // ✅ Update UI optimistically
-      setUserData((prevData) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          favorites: isFavorite
-            ? Object.fromEntries(
-                Object.entries(prevData.favorites || {}).filter(
-                  ([key]) => key !== recipeId
-                )
+    // 🔄 **Optimistic UI Update Before Calling removeRecipe**
+    setUserData((prevData) => {
+      if (!prevData) return prevData;
+      return {
+        ...prevData,
+        favorites: isFavorite
+          ? Object.fromEntries(
+              Object.entries(prevData.favorites || {}).filter(
+                ([key]) => key !== recipeId
               )
-            : prevData.favorites,
-          createdRecipes: !isFavorite
-            ? Object.fromEntries(
-                Object.entries(prevData.createdRecipes || {}).filter(
-                  ([key]) => key !== recipeId
-                )
+            )
+          : prevData.favorites,
+        createdRecipes: !isFavorite
+          ? Object.fromEntries(
+              Object.entries(prevData.createdRecipes || {}).filter(
+                ([key]) => key !== recipeId
               )
-            : prevData.createdRecipes,
-        };
-      });
+            )
+          : prevData.createdRecipes,
+      };
     });
+
+    removeRecipe(recipeId, isFavorite, onCloseModal);
   };
 
   return (
@@ -62,34 +61,48 @@ export const UserPage = () => {
         {isCreating && (
           <RecipeFormWrapper>
             <RecipeForm
-              onSubmit={(values) => {
-                console.log("✅ Submitting new recipe from UserPage:", values);
-                addUserRecipe(values);
-                setIsCreating(false);
+              onSubmit={async (newRecipe) => {
+                if (!newRecipe) {
+                  console.error(
+                    "🚨 Recipe submission failed, no recipe returned."
+                  );
+                  toast.error("Something went wrong. Please try again.");
+                  return;
+                }
 
-                // ✅ Instantly update `userData` without waiting for Firebase
+                console.log(
+                  "✅ Recipe submitted successfully in UserPage:",
+                  newRecipe
+                );
+
+                // ✅ Manually update userData to reflect the new recipe instantly
                 setUserData((prevData) => ({
                   ...prevData,
                   createdRecipes: {
                     ...(prevData?.createdRecipes || {}),
-                    [values.name]: { id: values.name, ...values }, // ✅ Adds recipe instantly
+                    [newRecipe.id]: newRecipe, // ✅ Update UI immediately
                   },
                 }));
+
+                setIsCreating(false); // ✅ Closes the form properly
               }}
-              onCancel={() => setIsCreating(false)}
             />
           </RecipeFormWrapper>
         )}
 
-        {/* ✅ Render Recipes Directly from userData */}
+        {/* ✅ Ensure `createdRecipes` is correctly mapped */}
         {userData?.createdRecipes &&
+        Object.keys(userData.createdRecipes).length > 0 ? (
           Object.entries(userData.createdRecipes).map(([key, recipe]) => (
             <RecipeCard
-              key={recipe.id || key}
+              key={recipe.id || key} // ✅ Ensure unique key
               recipe={recipe}
               onDelete={() => handleRemoveRecipe(recipe.id, false)}
             />
-          ))}
+          ))
+        ) : (
+          <p>No created recipes yet.</p> // ✅ Show message when there are no recipes
+        )}
       </RecipeList>
 
       <h2>Your Favorite Recipes</h2>

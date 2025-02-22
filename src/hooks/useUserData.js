@@ -53,42 +53,38 @@ export const useUserData = () => {
   }, []);
 
   const addUserRecipe = async (recipe) => {
-    if (!auth.currentUser) {
+    const user = auth.currentUser;
+
+    if (!user) {
       toast.error("❌ Please log in to create recipes.");
-      return;
+      return null; // ✅ Return `null` if user is not logged in
+    }
+
+    if (
+      !recipe ||
+      typeof recipe !== "object" ||
+      !recipe.name ||
+      !recipe.method
+    ) {
+      console.error("🚨 Invalid recipe submitted:", recipe);
+      toast.error("❌ Recipe must have a name and method.");
+      return null; // ✅ Return `null` on invalid input
     }
 
     if (isSaving) {
       console.warn("🚫 Already saving recipe, skipping duplicate submission.");
-      return;
+      return null;
     }
 
     setIsSaving(true);
 
-    const userId = auth.currentUser.uid;
+    const userId = user.uid;
     const db = getDatabase();
     const userRecipesRef = ref(db, `users/${userId}/createdRecipes`);
 
     try {
       console.log("📤 Attempting to save recipe:", recipe);
 
-      // ✅ Fetch current recipes to check for duplicates
-      const snapshot = await get(userRecipesRef);
-      if (snapshot.exists()) {
-        const existingRecipes = snapshot.val();
-        const isDuplicate = Object.values(existingRecipes).some(
-          (r) => r.name === recipe.name && r.method === recipe.method
-        );
-
-        if (isDuplicate) {
-          console.warn("🚫 Duplicate recipe detected, skipping save.");
-          toast.error("Recipe already exists!");
-          setIsSaving(false);
-          return;
-        }
-      }
-
-      // ✅ Save recipe to Firebase
       const newRecipeRef = push(userRecipesRef);
       const recipeId = newRecipeRef.key;
 
@@ -97,33 +93,26 @@ export const useUserData = () => {
       }
 
       const recipeWithId = { id: recipeId, ...recipe };
-
       await set(newRecipeRef, recipeWithId);
       console.log("✅ Recipe saved successfully!");
 
-      // ✅ DEBUG: Log before UI update
-      console.log("🟢 Updating userData with new recipe:", recipeWithId);
-
-      // ✅ Instant UI update
-      setUserData((prevData) => {
-        console.log("🟡 Before UI update:", prevData);
-        const updatedData = {
-          ...prevData,
-          createdRecipes: {
-            ...(prevData?.createdRecipes || {}),
-            [recipeId]: recipeWithId, // ✅ Adds the new recipe immediately
-          },
-        };
-        console.log("🔵 After UI update:", updatedData);
-        return updatedData;
-      });
+      setUserData((prevData) => ({
+        ...prevData,
+        createdRecipes: {
+          ...(prevData?.createdRecipes || {}),
+          [recipeId]: recipeWithId,
+        },
+      }));
 
       toast.success("🎉 Recipe added successfully!");
+
+      return recipeWithId; // ✅ Return the saved recipe
     } catch (error) {
       console.error("❌ Error adding recipe:", error);
       toast.error("❌ Failed to add recipe.");
+      return null;
     } finally {
-      setTimeout(() => setIsSaving(false), 1000);
+      setTimeout(() => setIsSaving(false), 500);
     }
   };
 
@@ -184,10 +173,31 @@ export const useUserData = () => {
       : `users/${userId}/createdRecipes/${recipeId}`;
     const recipeRef = ref(db, recipePath);
 
-    try {
-      // 🔍 Check if the recipe exists in the correct location
-      const recipeSnapshot = await get(recipeRef);
+    // 🔄 **Optimistic UI Update Before Firebase Call**
+    setUserData((prevData) => {
+      if (!prevData) return prevData;
+      return {
+        ...prevData,
+        favorites: isFavorite
+          ? Object.fromEntries(
+              Object.entries(prevData.favorites || {}).filter(
+                ([key]) => key !== recipeId
+              )
+            )
+          : prevData.favorites,
+        createdRecipes: !isFavorite
+          ? Object.fromEntries(
+              Object.entries(prevData.createdRecipes || {}).filter(
+                ([key]) => key !== recipeId
+              )
+            )
+          : prevData.createdRecipes,
+      };
+    });
 
+    try {
+      // 🔍 Check if the recipe exists before deleting
+      const recipeSnapshot = await get(recipeRef);
       if (!recipeSnapshot.exists()) {
         toast.error(
           `❌ This recipe does not exist in your ${
@@ -197,34 +207,10 @@ export const useUserData = () => {
         return;
       }
 
-      // ❌ Remove from Firebase (ONLY from user's favorites or createdRecipes)
+      // ❌ Remove from Firebase
       await remove(recipeRef);
 
-      // ✅ Close modal (if provided)
       if (onCloseModal) onCloseModal();
-
-      // ✅ Ensure UI updates immediately
-      setUserData((prevData) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          favorites: isFavorite
-            ? Object.fromEntries(
-                Object.entries(prevData.favorites || {}).filter(
-                  ([key]) => key !== recipeId
-                )
-              )
-            : prevData.favorites,
-          createdRecipes: !isFavorite
-            ? Object.fromEntries(
-                Object.entries(prevData.createdRecipes || {}).filter(
-                  ([key]) => key !== recipeId
-                )
-              )
-            : prevData.createdRecipes,
-        };
-      });
 
       toast.success(
         `✅ Recipe removed from ${
