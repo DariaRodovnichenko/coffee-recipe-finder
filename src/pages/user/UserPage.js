@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader } from "../../components/Loader/Loader.js";
 import { RecipeCard } from "../../components/RecipeCard/RecipeCard.js";
 import { useUserData } from "../../hooks/useUserData.js";
@@ -16,37 +16,90 @@ export const UserPage = () => {
   const { userData, setUserData, loading, removeRecipe } = useUserData();
   const [isCreating, setIsCreating] = useState(false);
 
-  console.log("🔄 Rendering UserPage with userData:", userData);
+  useEffect(() => {
+    console.log("🟢 UI Re-Rendering with Updated userData:", userData);
+  }, [userData]);
 
   if (loading) return <Loader />;
 
-  // ✅ Function to remove a recipe and update UI immediately
-  const handleRemoveRecipe = (recipeId, isFavorite = false, onCloseModal) => {
-    console.log(`🗑️ Removing recipe ${recipeId}`);
+  // ✅ Function to remove a recipe and update UI instantly
+  const handleRemoveRecipe = async (recipeId, isFavorite = false) => {
+    console.log(
+      `🗑️ Removing recipe: ${recipeId} from ${
+        isFavorite ? "favorites" : "created recipes"
+      }`
+    );
 
-    // 🔄 **Optimistic UI Update Before Calling removeRecipe**
-    setUserData((prevData) => {
-      if (!prevData) return prevData;
-      return {
-        ...prevData,
-        favorites: isFavorite
-          ? Object.fromEntries(
-              Object.entries(prevData.favorites || {}).filter(
-                ([key]) => key !== recipeId
-              )
-            )
-          : prevData.favorites,
-        createdRecipes: !isFavorite
-          ? Object.fromEntries(
-              Object.entries(prevData.createdRecipes || {}).filter(
-                ([key]) => key !== recipeId
-              )
-            )
-          : prevData.createdRecipes,
-      };
-    });
+    let keyToRemove = recipeId; // Default for created recipes
 
-    removeRecipe(recipeId, isFavorite, onCloseModal);
+    if (isFavorite) {
+      // 🔍 **Find the correct Firebase key in favorites**
+      const favoriteEntry = Object.entries(userData.favorites || {}).find(
+        ([, favRecipe]) => favRecipe.id === recipeId
+      );
+
+      if (!favoriteEntry) {
+        console.warn(`❌ Recipe ${recipeId} not found in favorites.`);
+        toast.error("❌ Recipe not found in favorites.");
+        return;
+      }
+
+      keyToRemove = favoriteEntry[0]; // ✅ Use Firebase key for removal
+    }
+
+    try {
+      await removeRecipe(keyToRemove, isFavorite);
+      console.log(`✅ Successfully removed recipe: ${recipeId}`);
+
+      // ✅ **Ensure UI Updates Before Closing Modal**
+      // setUserData((prevData) => {
+      //   if (!prevData) return prevData;
+
+      //   const updatedUserData = { ...prevData }; // Copy entire userData object
+      //   if (isFavorite) {
+      //     updatedUserData.favorites = { ...prevData.favorites };
+      //     delete updatedUserData.favorites[keyToRemove]; // Remove the favorite
+      //   } else {
+      //     updatedUserData.createdRecipes = { ...prevData.createdRecipes };
+      //     delete updatedUserData.createdRecipes[keyToRemove]; // Remove the created recipe
+      //   }
+
+      //   return updatedUserData; // ✅ React will detect the change
+      // });
+
+      setUserData((prevData) => {
+        if (!prevData) return prevData;
+  
+        // Create entirely new objects to guarantee re-render
+        const newFavorites = isFavorite
+          ? Object.entries(prevData.favorites || {})
+              .filter(([key]) => key !== recipeId)
+              .reduce((acc, [key, value]) => {
+                acc[key] = value;
+                return acc;
+              }, {})
+          : prevData.favorites;
+  
+        const newCreatedRecipes = !isFavorite
+          ? Object.entries(prevData.createdRecipes || {})
+              .filter(([key]) => key !== recipeId)
+              .reduce((acc, [key, value]) => {
+                acc[key] = value;
+                return acc;
+              }, {})
+          : prevData.createdRecipes;
+  
+  
+        return { ...prevData, favorites: newFavorites, createdRecipes: newCreatedRecipes };
+      });
+
+      toast.success(
+        `Recipe removed from ${isFavorite ? "favorites" : "created recipes"}!`
+      );
+    } catch (error) {
+      console.error("❌ Error removing recipe:", error);
+      toast.error("❌ Failed to remove recipe.");
+    }
   };
 
   return (
@@ -63,46 +116,33 @@ export const UserPage = () => {
             <RecipeForm
               onSubmit={async (newRecipe) => {
                 if (!newRecipe) {
-                  console.error(
-                    "🚨 Recipe submission failed, no recipe returned."
-                  );
                   toast.error("Something went wrong. Please try again.");
                   return;
                 }
 
-                console.log(
-                  "✅ Recipe submitted successfully in UserPage:",
-                  newRecipe
-                );
-
-                // ✅ Manually update userData to reflect the new recipe instantly
+                // ✅ Update userData to reflect the new recipe instantly
                 setUserData((prevData) => ({
                   ...prevData,
                   createdRecipes: {
                     ...(prevData?.createdRecipes || {}),
-                    [newRecipe.id]: newRecipe, // ✅ Update UI immediately
+                    [newRecipe.id]: newRecipe,
                   },
                 }));
 
-                setIsCreating(false); // ✅ Closes the form properly
+                setIsCreating(false);
               }}
             />
           </RecipeFormWrapper>
         )}
 
-        {/* ✅ Ensure `createdRecipes` is correctly mapped */}
         {userData?.createdRecipes &&
-        Object.keys(userData.createdRecipes).length > 0 ? (
           Object.entries(userData.createdRecipes).map(([key, recipe]) => (
             <RecipeCard
-              key={recipe.id || key} // ✅ Ensure unique key
+              key={key}
               recipe={recipe}
               onDelete={() => handleRemoveRecipe(recipe.id, false)}
             />
-          ))
-        ) : (
-          <p>No created recipes yet.</p> // ✅ Show message when there are no recipes
-        )}
+          ))}
       </RecipeList>
 
       <h2>Your Favorite Recipes</h2>
@@ -110,7 +150,7 @@ export const UserPage = () => {
         {userData?.favorites &&
           Object.entries(userData.favorites).map(([key, recipe]) => (
             <RecipeCard
-              key={recipe.id || key}
+              key={key}
               recipe={recipe}
               onDelete={() => handleRemoveRecipe(recipe.id, true)}
             />

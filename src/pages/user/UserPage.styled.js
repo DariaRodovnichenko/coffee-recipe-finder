@@ -14,8 +14,8 @@ export const RecipeList = styled.div`
 
 /* ✅ Base Recipe Card for Both New & Existing Recipes */
 export const RecipeCardBase = styled.div`
-  width: 220px; /* ✅ Ensure all cards are the same width */
-  height: 280px; /* ✅ Ensures same height */
+  width: 200px; /* ✅ Ensure all cards are the same width */
+  height: 200px; /* ✅ Ensures same height */
   background: #f9f9f9;
   border-radius: 12px;
   padding: 16px;

@@ -160,7 +160,7 @@ export const useUserData = () => {
     }
   };
 
-  const removeRecipe = async (recipeId, isFavorite = false, onCloseModal) => {
+  const removeRecipe = async (recipeId, isFavorite = false) => {
     if (!auth.currentUser) {
       toast.error("❌ Please log in to remove recipes.");
       return;
@@ -173,30 +173,8 @@ export const useUserData = () => {
       : `users/${userId}/createdRecipes/${recipeId}`;
     const recipeRef = ref(db, recipePath);
 
-    // 🔄 **Optimistic UI Update Before Firebase Call**
-    setUserData((prevData) => {
-      if (!prevData) return prevData;
-      return {
-        ...prevData,
-        favorites: isFavorite
-          ? Object.fromEntries(
-              Object.entries(prevData.favorites || {}).filter(
-                ([key]) => key !== recipeId
-              )
-            )
-          : prevData.favorites,
-        createdRecipes: !isFavorite
-          ? Object.fromEntries(
-              Object.entries(prevData.createdRecipes || {}).filter(
-                ([key]) => key !== recipeId
-              )
-            )
-          : prevData.createdRecipes,
-      };
-    });
-
     try {
-      // 🔍 Check if the recipe exists before deleting
+      // 🔍 **Check if the recipe exists before deleting**
       const recipeSnapshot = await get(recipeRef);
       if (!recipeSnapshot.exists()) {
         toast.error(
@@ -207,20 +185,40 @@ export const useUserData = () => {
         return;
       }
 
-      // ❌ Remove from Firebase
+      // ❌ **Remove from Firebase**
       await remove(recipeRef);
+      console.log(`🗑️ Recipe ${recipeId} removed from Firebase.`);
 
-      if (onCloseModal) onCloseModal();
+      // ✅ **Create a new userData object to force React re-render**
+      setUserData((prevData) => {
+        if (!prevData) return prevData;
+
+        //   const updatedUserData = { ...prevData }; // Copy entire userData object
+        //   if (isFavorite) {
+        //     updatedUserData.favorites = { ...prevData.favorites }; // Copy favorites
+        //     delete updatedUserData.favorites[recipeId]; // Remove the recipe
+        //   } else {
+        //     updatedUserData.createdRecipes = { ...prevData.createdRecipes }; // Copy created recipes
+        //     delete updatedUserData.createdRecipes[recipeId]; // Remove the recipe
+        //   }
+
+        //   console.log("📌 Updated userData after removal:", updatedUserData);
+        //   return updatedUserData; // ✅ Return a new object to trigger re-render
+        // });
+
+        const updatedUserData = JSON.parse(JSON.stringify(prevData)); // Deep copy!
+        if (isFavorite) {
+          delete updatedUserData.favorites[recipeId];
+        } else {
+          delete updatedUserData.createdRecipes[recipeId];
+        }
+        return updatedUserData;
+      });
 
       toast.success(
         `✅ Recipe removed from ${
           isFavorite ? "favorites" : "created recipes"
         }!`
-      );
-      console.log(
-        `🗑️ Recipe ${recipeId} removed from ${
-          isFavorite ? "favorites" : "created recipes"
-        }.`
       );
     } catch (error) {
       console.error("❌ Error removing recipe:", error);

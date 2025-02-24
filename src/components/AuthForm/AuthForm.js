@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useDispatch} from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -20,13 +21,18 @@ import {
   PasswordWrapper,
   TogglePasswordBtn,
 } from "./AuthStyledForm.styled.js";
+import toast from "react-hot-toast";
 
 export const AuthForm = ({
   isSignedUp,
   setIsSignedUp,
   setIsLoginModalOpen,
 }) => {
+  if (!setIsSignedUp) {
+    console.error("setIsSignedUp is not provided to AuthForm.");
+  }
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -60,11 +66,18 @@ export const AuthForm = ({
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting }) => {
-      const action = isSignedUp ? registerUser(values) : loginUser(values);
+      const { email, password, username } = values;
+      const action = isSignedUp
+        ? registerUser({ email, password, username })
+        : loginUser({ email, password });
       dispatch(action)
         .unwrap()
         .then(() => {
-          setIsLoginModalOpen(false); // ✅ Close modal after success
+          setIsLoginModalOpen(false);
+          navigate("/my-recipes");
+        })
+        .catch((error) => {
+          toast.error(error); // Show error message in UI
         })
         .finally(() => setSubmitting(false));
     },

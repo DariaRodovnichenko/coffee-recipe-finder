@@ -23,8 +23,9 @@ export const LogInLbl = styled.label`
 `;
 
 export const LogInInput = styled.input`
-  width: 90%;
+  width: 100%; // Take full width of the wrapper
   padding: 10px;
+  padding-right: 35px; // Space for the toggle button inside
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
@@ -41,6 +42,7 @@ export const LogInInput = styled.input`
     border: 3px solid gold;
   }
 `;
+
 
 export const Error = styled.div`
   color: white;
@@ -71,13 +73,21 @@ export const PasswordWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%; // Ensures it matches the input width
 `;
+
 
 export const TogglePasswordBtn = styled.button`
   position: absolute;
   right: 10px;
+  top: 50%;
+  transform: translateY(-50%); // Center it vertically
   background: transparent;
   border: none;
   cursor: pointer;
   font-size: 16px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

@@ -13,7 +13,7 @@ Modal.setAppElement("#root");
 export const Layout = () => {
   const { isAdmin } = useAdminStatus();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
+  const [isSignedUp, setIsSignedUp] = useState(false);
   const firstInputRef = useRef(null);
   const dispatch = useDispatch();
   const { error, user } = useSelector((state) => state.auth);
@@ -58,7 +58,7 @@ export const Layout = () => {
             </li>
           )}
         </ul>
-        
+
         <LoginBtn
           onClick={() => {
             if (user) {
@@ -79,24 +79,11 @@ export const Layout = () => {
         onRequestClose={() => setIsLoginModalOpen(false)}
         contentLabel="Login Form"
       >
-        {isRegistering ? (
-          <div>
-            <h2>Register</h2>
-            <AuthForm isRegistering={true} />
-            <button onClick={() => setIsRegistering(false)}>
-              Already have an account? Log in
-            </button>
-          </div>
-        ) : (
-          <div>
-            <h2>Login</h2>
-            <AuthForm isRegistering={false} />
-            <button onClick={() => setIsRegistering(true)}>
-              Don't have an account? Sign in!
-            </button>
-          </div>
-        )}
-
+        <AuthForm
+          isSignedUp={isSignedUp}
+          setIsSignedUp={setIsSignedUp}
+          setIsLoginModalOpen={setIsLoginModalOpen}
+        />
         <button onClick={() => setIsLoginModalOpen(false)}>Close</button>
         {error && <div style={{ color: "red" }}>{error}</div>}
       </Modal>

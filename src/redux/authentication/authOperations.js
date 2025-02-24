@@ -58,7 +58,7 @@ export const registerUser = createAsyncThunk(
           userData = snapshot.val();
           break;
         }
-        await new Promise((resolve) => setTimeout(resolve, 500)); // Wait before retrying
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait before retrying
         attempts++;
       }
 
