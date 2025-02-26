@@ -215,15 +215,19 @@ export const useUserData = () => {
         }
         return updatedUserData;
       });
-
-      toast.success(
+      console.log(
         `✅ Recipe removed from ${
           isFavorite ? "favorites" : "created recipes"
         }!`
       );
+      // toast.success(
+      // `✅ Recipe removed from ${
+      //   isFavorite ? "favorites" : "created recipes"
+      // }!`
+      // );
     } catch (error) {
       console.error("❌ Error removing recipe:", error);
-      toast.error("❌ Failed to remove recipe.");
+      // toast.error("❌ Failed to remove recipe.");
     }
   };
 
