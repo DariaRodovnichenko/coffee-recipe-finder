@@ -18,12 +18,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      console.log("🟢 Redux: Setting user ->", action.payload);
       state.user = action.payload;
+      console.log("🟢 Redux: Setting user ->", action.payload);
     },
     setAdminStatus: (state, action) => {
-      console.log("🟡 Redux: Setting admin status ->", action.payload);
       state.isAdmin = action.payload;
+      console.log("🟡 Redux: Setting admin status ->", action.payload);
     },
     resetAuthState: (state) => {
       return initialState; // ✅ Clears user on logout
@@ -42,13 +42,14 @@ const authSlice = createSlice({
         );
         state.loading = false;
         state.user = action.payload;
+        state.isAdmin = action.payload.role === "admin";
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
       .addCase(logoutUser.fulfilled, (state) => {
-         console.log("🔴 Redux: User logged out, resetting state");
+        console.log("🔴 Redux: User logged out, resetting state");
         state.user = null;
         state.isAdmin = false; // Reset admin status on logout
       })

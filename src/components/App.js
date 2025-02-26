@@ -11,6 +11,7 @@ import { Loader } from "./Loader/Loader.js";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAdminStatus } from "../redux/authentication/authAdmin.js";
 import { useEffect } from "react";
+import { ManageUsers } from "../pages/admin/ManageUsers.styled.js";
 
 // ✅ Protecting the Admin Route
 const AdminRoute = ({ children }) => {
@@ -64,6 +65,17 @@ export const App = () => {
               </AdminRoute>
             }
           />
+
+          {/* ✅ Only allow admins to access user management */}
+          <Route
+            path="admin/users"
+            element={
+              <AdminRoute>
+                <ManageUsers />
+              </AdminRoute>
+            }
+          />
+          
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getDatabase, ref, push, onValue, set, remove } from "firebase/database";
+import { getDatabase, ref, push, onValue, set, remove, update } from "firebase/database";
 
 // ✅ Custom Hook to manage admin recipes
 export const useAdminRecipes = () => {
@@ -80,5 +80,20 @@ export const useAdminRecipes = () => {
     }
   };
 
-  return { recipes, loading, error, addRecipe, deleteRecipe };
+  const updateRecipe = async (recipeId, updatedData) => {
+    try {
+      const db = getDatabase();
+      const recipeRef = ref(db, `recipes/${recipeId}`);
+
+      // ✅ Ensure we don't overwrite the ID
+      const { id, ...recipeUpdates } = updatedData;
+
+      await update(recipeRef, recipeUpdates); // ✅ Update recipe in Firebase
+      console.log("✅ Recipe updated successfully:", recipeUpdates);
+    } catch (error) {
+      console.error("❌ Error updating recipe:", error);
+    }
+  }
+
+  return { recipes, loading, error, addRecipe, deleteRecipe, updateRecipe };
 };

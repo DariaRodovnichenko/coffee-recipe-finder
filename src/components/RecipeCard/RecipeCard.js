@@ -6,6 +6,13 @@ import {
   MetaWrapper,
   CloseBtn,
   CardModal,
+  EditForm,
+  EditLabel,
+  EditInput,
+  EditTextarea,
+  EditBtnGroup,
+  SaveBtn,
+  CancelBtn,
 } from "./RecipeCard.styled.js";
 import { useUserData } from "../../hooks/useUserData.js";
 import toast from "react-hot-toast";
@@ -15,9 +22,11 @@ CardModal.setAppElement("#root"); // Accessibility fix
 
 export const RecipeCard = ({ recipe = {}, onDelete }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [updatedRecipe, setUpdatedRecipe] = useState(recipe);
   const { addToFavorites, removeUserRecipe, userData, setUserData } =
     useUserData();
-  const { deleteRecipe } = useAdminRecipes();
+  const { deleteRecipe, updateRecipe } = useAdminRecipes();
 
   const {
     id,
@@ -125,6 +134,22 @@ export const RecipeCard = ({ recipe = {}, onDelete }) => {
     }
   };
 
+  // ✅ Handle EditInput changes for the form
+  const handleChange = (e) => {
+    setUpdatedRecipe({ ...updatedRecipe, [e.target.name]: e.target.value });
+  };
+
+  // ✅ Handle update submission
+  const handleUpdate = async () => {
+    try {
+      await updateRecipe(recipe.id, updatedRecipe);
+      toast.success("✅ Recipe updated successfully!");
+      setEditMode(false); // ✅ Exit edit mode
+    } catch (error) {
+      toast.error("❌ Failed to update recipe.");
+    }
+  };
+
   return (
     <Wrapper>
       {/* Clickable Card to Open Modal */}
@@ -146,80 +171,167 @@ export const RecipeCard = ({ recipe = {}, onDelete }) => {
       <CardModal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
-        contentLabel="Recipe Details"
+        contentEditLabel="Recipe Details"
       >
-        <h2>{name}</h2>
-        {country && <p>Representative of {country}</p>}
-        {year && <p>Year of performance: {year}</p>}
-        <p>
-          <strong>Method of brewing:</strong> {method}
-        </p>
+        <h2>{editMode ? "Edit Recipe" : name}</h2>
 
-        <MetaWrapper>
-          {beans && (
+        {editMode ? (
+          // ✅ Editable Form for Admins
+          <EditForm>
+            <EditLabel>Name:</EditLabel>
+            <EditInput
+              type="text"
+              name="name"
+              value={updatedRecipe.name}
+              onChange={handleChange}
+            />
+
+            <EditLabel>Country:</EditLabel>
+            <EditInput
+              type="text"
+              name="country"
+              value={updatedRecipe.country}
+              onChange={handleChange}
+            />
+
+            <EditLabel>Year:</EditLabel>
+            <EditInput
+              type="text"
+              name="year"
+              value={updatedRecipe.year}
+              onChange={handleChange}
+            />
+
+            <EditLabel>Method:</EditLabel>
+            <EditInput
+              type="text"
+              name="method"
+              value={updatedRecipe.method}
+              onChange={handleChange}
+            />
+
+            <EditLabel>Beans:</EditLabel>
+            <EditInput
+              type="text"
+              name="beans"
+              value={updatedRecipe.beans}
+              onChange={handleChange}
+            />
+
+            <EditLabel>Grinder:</EditLabel>
+            <EditInput
+              type="text"
+              name="grinder"
+              value={updatedRecipe.grinder}
+              onChange={handleChange}
+            />
+
+            <EditLabel>Filter:</EditLabel>
+            <EditInput
+              type="text"
+              name="filter"
+              value={updatedRecipe.filter}
+              onChange={handleChange}
+            />
+
+            <EditLabel>Ingredients:</EditLabel>
+            <EditTextarea
+              name="ingredients"
+              value={updatedRecipe.ingredients}
+              onChange={handleChange}
+            />
+
+            <EditLabel>Steps:</EditLabel>
+            <EditTextarea
+              name="steps"
+              value={updatedRecipe.steps}
+              onChange={handleChange}
+            />
+            <EditBtnGroup>
+              <SaveBtn onClick={handleUpdate}>Save Changes</SaveBtn>
+              <CancelBtn onClick={() => setEditMode(false)}>Cancel</CancelBtn>
+            </EditBtnGroup>
+          </EditForm>
+        ) : (
+          <>
+            {country && <p>Representative of {country}</p>}
+            {year && <p>Year of performance: {year}</p>}
             <p>
-              <strong>Beans:</strong> {beans}
+              <strong>Method of brewing:</strong> {method}
             </p>
-          )}
-          {grinder && (
-            <p>
-              <strong>Grinder:</strong> {grinder}
-            </p>
-          )}
-          {filter && (
-            <p>
-              <strong>Filter:</strong> {filter}
-            </p>
-          )}
 
-          {ingredientsArray.length > 0 && (
-            <>
-              <h3>Ingredients:</h3>
-              <ul>
-                {ingredientsArray.map((ingredient, index) => (
-                  <li key={index}>{ingredient}</li>
-                ))}
-              </ul>
-            </>
-          )}
+            <MetaWrapper>
+              {beans && (
+                <p>
+                  <strong>Beans:</strong> {beans}
+                </p>
+              )}
+              {grinder && (
+                <p>
+                  <strong>Grinder:</strong> {grinder}
+                </p>
+              )}
+              {filter && (
+                <p>
+                  <strong>Filter:</strong> {filter}
+                </p>
+              )}
 
-          {stepsArray.length > 0 && (
-            <>
-              <h3>Step By Step:</h3>
-              <ol>
-                {stepsArray.map((step, index) => (
-                  <li key={index}>{step}</li>
-                ))}
-              </ol>
-            </>
-          )}
+              {ingredientsArray.length > 0 && (
+                <>
+                  <h3>Ingredients:</h3>
+                  <ul>
+                    {ingredientsArray.map((ingredient, index) => (
+                      <li key={index}>{ingredient}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
 
-          {/* ✅ Show Correct Button Based on Recipe Type */}
-          {!isCreatedByUser && (
-            <button
-              onClick={() => {
-                if (isFavorite) {
-                  handleRemoveUserRecipe(); // ✅ Use correct function for removing
-                } else {
-                  handleToggleFavorite(); // ✅ Use toggle function for adding
-                }
-              }}
-            >
-              {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-            </button>
-          )}
+              {stepsArray.length > 0 && (
+                <>
+                  <h3>Step By Step:</h3>
+                  <ol>
+                    {stepsArray.map((step, index) => (
+                      <li key={index}>{step}</li>
+                    ))}
+                  </ol>
+                </>
+              )}
 
-          {isCreatedByUser && (
-            <button onClick={handleRemoveUserRecipe}>Remove Recipe</button>
-          )}
+              {/* ✅ Show Correct Button Based on Recipe Type */}
+              {!isCreatedByUser && !editMode && !isAdmin && (
+                <button
+                  onClick={() => {
+                    if (isFavorite) {
+                      handleRemoveUserRecipe(); // ✅ Use correct function for removing
+                    } else {
+                      handleToggleFavorite(); // ✅ Use toggle function for adding
+                    }
+                  }}
+                >
+                  {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+                </button>
+              )}
 
-          {/* ✅ Show Delete Button for Admins */}
-          {isAdmin && (
-            <button onClick={handleDeleteRecipe} style={{ color: "red" }}>
-              Delete Recipe
-            </button>
-          )}
-        </MetaWrapper>
+              {isCreatedByUser && !editMode && (
+                <button onClick={handleRemoveUserRecipe}>Remove Recipe</button>
+              )}
+
+              {/* ✅ Show Edit Button for Admins */}
+              {isAdmin && !editMode && (
+                <button onClick={() => setEditMode(true)}>Edit Recipe</button>
+              )}
+
+              {/* ✅ Show Delete Button for Admins */}
+              {isAdmin && !editMode && (
+                <button onClick={handleDeleteRecipe} style={{ color: "red" }}>
+                  Delete Recipe
+                </button>
+              )}
+            </MetaWrapper>
+          </>
+        )}
 
         <CloseBtn onClick={() => setModalIsOpen(false)}>
           <ImCancelCircle />

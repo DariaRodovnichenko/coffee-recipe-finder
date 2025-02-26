@@ -100,8 +100,10 @@ export const loginUser = createAsyncThunk(
       }
 
       const userData = snapshot.val();
-      const role = userData.role || "user"; // Default role if not found
-      const isAdmin = role === "admin"; // ✅ Use database role instead of token
+      // Default role if not found
+      const role = userData.role || "user";
+      // Use database role
+      const isAdmin = role === "admin";
 
       dispatch(setAdminStatus(isAdmin));
       dispatch(setUser(userData));
