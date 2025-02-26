@@ -9,12 +9,15 @@ import {
 } from "./RecipeCard.styled.js";
 import { useUserData } from "../../hooks/useUserData.js";
 import toast from "react-hot-toast";
+import { useAdminRecipes } from "../../hooks/useAdminRecipes.js";
 
 CardModal.setAppElement("#root"); // Accessibility fix
 
 export const RecipeCard = ({ recipe = {}, onDelete }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const { addToFavorites, removeRecipe, userData, setUserData } = useUserData();
+  const { addToFavorites, removeUserRecipe, userData, setUserData } =
+    useUserData();
+  const { deleteRecipe } = useAdminRecipes();
 
   const {
     id,
@@ -34,6 +37,8 @@ export const RecipeCard = ({ recipe = {}, onDelete }) => {
     : [];
   const stepsArray = steps ? steps.split(",").map((item) => item.trim()) : [];
 
+  const isAdmin = userData?.role === "admin";
+
   // ✅ Check if the recipe is in user's favorites
   const isFavorite =
     userData?.favorites &&
@@ -48,57 +53,35 @@ export const RecipeCard = ({ recipe = {}, onDelete }) => {
   const handleToggleFavorite = async () => {
     try {
       let keyToRemove = id;
-  
+
       if (isFavorite) {
         // 🔍 Find the correct Firebase key
         const favoriteEntry = Object.entries(userData.favorites || {}).find(
           ([, favRecipe]) => favRecipe.id === id
         );
-  
+
         if (!favoriteEntry) {
           console.warn(`❌ Recipe ${id} not found in favorites.`);
           toast.error("❌ Recipe not found in favorites.");
           return;
         }
-  
-        keyToRemove = favoriteEntry[0]; // ✅ Use correct Firebase key
-      }
-  
-      // if (isFavorite) {
-      //   await removeRecipe(keyToRemove, true);
-      // } else {
-      //   await addToFavorites(recipe);
-      // }
-  
-      // // ✅ **Ensure UI Updates Properly by creating a NEW OBJECT**
-      // setUserData((prevData) => {
-      //   if (!prevData) return prevData;
-  
-      //   const updatedFavorites = { ...prevData.favorites };
-  
-      //   if (isFavorite) {
-      //     delete updatedFavorites[keyToRemove]; // Remove from favorites
-      //   } else {
-      //     updatedFavorites[keyToRemove] = recipe; // Add to favorites
-      //   }
-  
-      //   return { ...prevData, favorites: { ...updatedFavorites } }; // ✅ New object forces re-render
-      // });
-  
-      if (isFavorite) {
-        await removeRecipe(keyToRemove, true);
+
+        keyToRemove = favoriteEntry[0];
+        await removeUserRecipe(keyToRemove, true);
       } else {
         await addToFavorites(recipe);
       }
-  
+
       setUserData((prevData) => {
         if (!prevData) return prevData;
-  
+
         const updatedUserData = JSON.parse(JSON.stringify(prevData)); // Deep copy!
         if (isFavorite) {
           delete updatedUserData.favorites[keyToRemove];
         } else {
-          updatedUserData.favorites[keyToRemove] = JSON.parse(JSON.stringify(recipe)); // Deep Copy recipe too!
+          updatedUserData.favorites[keyToRemove] = JSON.parse(
+            JSON.stringify(recipe)
+          ); // Deep Copy recipe too!
         }
         return updatedUserData;
       });
@@ -109,17 +92,36 @@ export const RecipeCard = ({ recipe = {}, onDelete }) => {
       toast.error("❌ Failed to update favorites.");
     }
   };
-  
+
   // ✅ Remove recipe from Favorites or Created Recipes
-  const handleRemoveRecipe = async () => {
-    console.log(`🗑️ Removing recipe from UI: ${id}`);
+  const handleRemoveUserRecipe = async () => {
+    console.log(`🗑️ Attempting to remove recipe from UI: ${id}`);
+
     try {
-      await onDelete(); // ✅ Calls `handleRemoveRecipe` from UserPage.js
+      if (!onDelete) {
+        console.error("❌ onDelete function is not defined in RecipeCard!");
+        return;
+      }
+
+      await onDelete(id, true); // ✅ Call the function passed from `UserPage.js`
       console.log(`✅ Successfully removed from UI: ${id}`);
       setModalIsOpen(false); // ✅ Close modal
     } catch (error) {
       console.error("❌ Error removing recipe:", error);
       toast.error("❌ Failed to remove recipe.");
+    }
+  };
+
+  // ✅ Remove recipe from Firebase (Admin only)
+  const handleDeleteRecipe = async () => {
+    if (!window.confirm("Are you sure you want to delete this recipe?")) return;
+    try {
+      await deleteRecipe(id);
+      toast.success("✅ Recipe deleted successfully.");
+      setModalIsOpen(false); // ✅ Close modal after deletion
+    } catch (error) {
+      console.error("❌ Error deleting recipe:", error);
+      toast.error("❌ Failed to delete recipe.");
     }
   };
 
@@ -194,13 +196,28 @@ export const RecipeCard = ({ recipe = {}, onDelete }) => {
 
           {/* ✅ Show Correct Button Based on Recipe Type */}
           {!isCreatedByUser && (
-            <button onClick={handleToggleFavorite}>
+            <button
+              onClick={() => {
+                if (isFavorite) {
+                  handleRemoveUserRecipe(); // ✅ Use correct function for removing
+                } else {
+                  handleToggleFavorite(); // ✅ Use toggle function for adding
+                }
+              }}
+            >
               {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             </button>
           )}
 
           {isCreatedByUser && (
-            <button onClick={handleRemoveRecipe}>Remove Recipe</button>
+            <button onClick={handleRemoveUserRecipe}>Remove Recipe</button>
+          )}
+
+          {/* ✅ Show Delete Button for Admins */}
+          {isAdmin && (
+            <button onClick={handleDeleteRecipe} style={{ color: "red" }}>
+              Delete Recipe
+            </button>
           )}
         </MetaWrapper>
 

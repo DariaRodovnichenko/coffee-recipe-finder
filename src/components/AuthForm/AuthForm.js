@@ -72,9 +72,15 @@ export const AuthForm = ({
         : loginUser({ email, password });
       dispatch(action)
         .unwrap()
-        .then(() => {
+        .then((userData) => {
           setIsLoginModalOpen(false);
-          navigate("/my-recipes");
+
+          // ✅ Redirect admin users to admin panel
+          if (userData.role === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/my-recipes");
+          }
         })
         .catch((error) => {
           toast.error(error); // Show error message in UI

@@ -8,15 +8,33 @@ import { Layout } from "./Layout/Layout.js";
 import { UserPage } from "../pages/user/UserPage.js";
 import { useAdminStatus } from "../hooks/useAdminStatus.js"; // ✅ Admin Hook
 import { Loader } from "./Loader/Loader.js";
+import { useDispatch, useSelector } from "react-redux";
+import { checkAdminStatus } from "../redux/authentication/authAdmin.js";
+import { useEffect } from "react";
 
 // ✅ Protecting the Admin Route
 const AdminRoute = ({ children }) => {
+  const dispatch = useDispatch();
   const { isAdmin, loading } = useAdminStatus();
+  const { user } = useSelector((state) => state.auth);
 
-  console.log("🔍 Checking Admin Status: ", { isAdmin, loading });
+  useEffect(() => {
+    if (user && !isAdmin) {
+      // ✅ Only check admin status if not already an admin
+      dispatch(checkAdminStatus(user.uid));
+    }
+  }, [user, isAdmin, dispatch]);
 
   if (loading) return <Loader />;
   return isAdmin ? children : <Navigate to="/" replace />;
+};
+
+const UserRoute = ({ children }) => {
+  const { user, loading } = useSelector((state) => state.auth);
+
+  if (loading) return <Loader />; // Show a loader while checking auth state
+
+  return user ? children : <Navigate to="/" replace />; // Redirect if not logged in
 };
 
 export const App = () => {
@@ -27,8 +45,15 @@ export const App = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/recipes" replace />} />
           <Route path="recipes" element={<RecipesPage />} />
-          {/* <Route path="create" element={<CreateRecipePage />} /> */}
-          <Route path="my-recipes" element={<UserPage />} />
+
+          <Route
+            path="my-recipes"
+            element={
+              <UserRoute>
+                <UserPage />
+              </UserRoute>
+            }
+          />
 
           {/* ✅ Protected Admin Panel */}
           <Route
@@ -39,6 +64,7 @@ export const App = () => {
               </AdminRoute>
             }
           />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
 

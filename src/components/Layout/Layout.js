@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../redux/authentication/authOperations.js";
 import toast, { Toaster } from "react-hot-toast";
 import { useAdminStatus } from "../../hooks/useAdminStatus.js";
+import { checkAdminStatus } from "../../redux/authentication/authAdmin.js";
 
 Modal.setAppElement("#root");
 
@@ -30,6 +31,12 @@ export const Layout = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user) {
+      dispatch(checkAdminStatus(user.uid));
+    }
+  }, [user, dispatch]);
+
   return (
     <Wrapper>
       <header>
@@ -41,7 +48,7 @@ export const Layout = () => {
           </li>
 
           {/* ✅ Conditionally render "My Page" only if user is logged in */}
-          {user && (
+          {user && !isAdmin && (
             <li>
               <StyledLink to="/my-recipes" end>
                 My Page

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getDatabase, ref, push, onValue, set } from "firebase/database";
+import { getDatabase, ref, push, onValue, set, remove } from "firebase/database";
 
 // ✅ Custom Hook to manage admin recipes
 export const useAdminRecipes = () => {
@@ -60,5 +60,25 @@ export const useAdminRecipes = () => {
     }
   };
 
-  return { recipes, loading, error, addRecipe };
+  // ✅ Function to delete a recipe from Firebase
+  const deleteRecipe = async (recipeId) => {
+    console.log("🗑️ Deleting recipe:", recipeId);
+    try {
+      setLoading(true);
+      setError(null);
+
+      const db = getDatabase();
+      const recipeRef = ref(db, `recipes/${recipeId}`);
+
+      await remove(recipeRef); // ✅ Remove recipe from Firebase
+      console.log("✅ Recipe deleted successfully:", recipeId);
+    } catch (error) {
+      setError(`❌ Error deleting recipe: ${error.code} - ${error.message}`);
+      console.error("❌ Error deleting recipe:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { recipes, loading, error, addRecipe, deleteRecipe };
 };

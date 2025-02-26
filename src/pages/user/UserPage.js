@@ -13,7 +13,7 @@ import {
 import toast from "react-hot-toast";
 
 export const UserPage = () => {
-  const { userData, setUserData, loading, removeRecipe } = useUserData();
+  const { userData, setUserData, loading, removeUserRecipe } = useUserData();
   const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export const UserPage = () => {
   if (loading) return <Loader />;
 
   // ✅ Function to remove a recipe and update UI instantly
-  const handleRemoveRecipe = async (recipeId, isFavorite = false) => {
+  const handleRemoveUserRecipe = async (recipeId, isFavorite = false) => {
     console.log(
       `🗑️ Removing recipe: ${recipeId} from ${
         isFavorite ? "favorites" : "created recipes"
@@ -48,7 +48,7 @@ export const UserPage = () => {
     }
 
     try {
-      await removeRecipe(keyToRemove, isFavorite);
+      await removeUserRecipe(keyToRemove, isFavorite);
       console.log(`✅ Successfully removed recipe: ${recipeId}`);
 
       // ✅ **Ensure UI Updates Before Closing Modal**
@@ -68,8 +68,9 @@ export const UserPage = () => {
       // });
 
       setUserData((prevData) => {
+        console.log(prevData);
         if (!prevData) return prevData;
-  
+
         // Create entirely new objects to guarantee re-render
         const newFavorites = isFavorite
           ? Object.entries(prevData.favorites || {})
@@ -79,7 +80,8 @@ export const UserPage = () => {
                 return acc;
               }, {})
           : prevData.favorites;
-  
+        console.log(newFavorites);
+
         const newCreatedRecipes = !isFavorite
           ? Object.entries(prevData.createdRecipes || {})
               .filter(([key]) => key !== recipeId)
@@ -88,9 +90,12 @@ export const UserPage = () => {
                 return acc;
               }, {})
           : prevData.createdRecipes;
-  
-  
-        return { ...prevData, favorites: newFavorites, createdRecipes: newCreatedRecipes };
+
+        return {
+          ...prevData,
+          favorites: newFavorites,
+          createdRecipes: newCreatedRecipes,
+        };
       });
 
       toast.success(
@@ -140,7 +145,7 @@ export const UserPage = () => {
             <RecipeCard
               key={key}
               recipe={recipe}
-              onDelete={() => handleRemoveRecipe(recipe.id, false)}
+              onDelete={(recipeId) => handleRemoveUserRecipe(recipeId, false)}
             />
           ))}
       </RecipeList>
@@ -152,7 +157,7 @@ export const UserPage = () => {
             <RecipeCard
               key={key}
               recipe={recipe}
-              onDelete={() => handleRemoveRecipe(recipe.id, true)}
+              onDelete={(recipeId) => handleRemoveUserRecipe(recipeId, true)}
             />
           ))}
       </RecipeList>

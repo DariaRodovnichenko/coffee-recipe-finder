@@ -160,7 +160,7 @@ export const useUserData = () => {
     }
   };
 
-  const removeRecipe = async (recipeId, isFavorite = false) => {
+  const removeUserRecipe = async (recipeId, isFavorite = false) => {
     if (!auth.currentUser) {
       toast.error("❌ Please log in to remove recipes.");
       return;
@@ -191,6 +191,7 @@ export const useUserData = () => {
 
       // ✅ **Create a new userData object to force React re-render**
       setUserData((prevData) => {
+        console.log(prevData);
         if (!prevData) return prevData;
 
         //   const updatedUserData = { ...prevData }; // Copy entire userData object
@@ -233,6 +234,6 @@ export const useUserData = () => {
     isAdmin,
     addUserRecipe,
     addToFavorites,
-    removeRecipe,
+    removeUserRecipe,
   };
 };
