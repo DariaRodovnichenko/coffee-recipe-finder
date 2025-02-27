@@ -43,19 +43,19 @@ export const RecipeForm = ({ onSubmit, onCancel }) => {
       validationSchema={RecipeSchema}
       onSubmit={async (values, actions) => {
         console.log("📝 Form submitted with values:", values);
-      
+
         if (isSubmitting) {
           console.warn("🚫 Submission blocked to prevent duplicate entry.");
           return;
         }
-      
+
         setIsSubmitting(true);
         try {
           const newRecipe = await addUserRecipe(values); // ✅ Store new recipe
           if (!newRecipe) {
             throw new Error("Recipe creation failed.");
           }
-      
+
           actions.resetForm();
           if (onSubmit) onSubmit(newRecipe); // ✅ Pass new recipe to `UserPage.js`
         } catch (error) {
@@ -140,9 +140,9 @@ export const RecipeForm = ({ onSubmit, onCancel }) => {
             Submit
           </button>
           {onCancel && (
-  <button type="button" onClick={onCancel} disabled={isSubmitting}>
-    Cancel
-  </button>
+            <button type="button" onClick={onCancel} disabled={isSubmitting}>
+              Cancel
+            </button>
           )}
         </StyledForm>
       )}

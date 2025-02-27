@@ -136,6 +136,7 @@ export const UserPage = () => {
 
                 setIsCreating(false);
               }}
+              onCancel={() => setIsCreating(false)}
             />
           </RecipeFormWrapper>
         )}

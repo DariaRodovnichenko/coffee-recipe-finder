@@ -11,7 +11,7 @@ import { Loader } from "./Loader/Loader.js";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAdminStatus } from "../redux/authentication/authAdmin.js";
 import { useEffect } from "react";
-import { ManageUsers } from "../pages/admin/ManageUsers.styled.js";
+import { ManageUsers } from "../pages/admin/ManageUsers.js";
 
 // ✅ Protecting the Admin Route
 const AdminRoute = ({ children }) => {
@@ -19,15 +19,30 @@ const AdminRoute = ({ children }) => {
   const { isAdmin, loading } = useAdminStatus();
   const { user } = useSelector((state) => state.auth);
 
+  console.log("🚀 [AdminRoute] Rendering...");
+  console.log("👤 User:", user);
+  console.log("👑 Admin Status:", isAdmin);
+  console.log("⏳ Loading Status:", loading);
+
   useEffect(() => {
     if (user && !isAdmin) {
-      // ✅ Only check admin status if not already an admin
+      console.log("🔄 Checking admin status...");
       dispatch(checkAdminStatus(user.uid));
     }
   }, [user, isAdmin, dispatch]);
 
-  if (loading) return <Loader />;
-  return isAdmin ? children : <Navigate to="/" replace />;
+  if (loading) {
+    console.log("⏳ Waiting for admin check...");
+    return <Loader />;
+  }
+
+  if (!isAdmin) {
+    console.warn("🚫 Access Denied: Redirecting to `/`");
+    return <Navigate to="/" replace />;
+  }
+
+  console.log("✅ Access Granted!");
+  return children;
 };
 
 const UserRoute = ({ children }) => {
@@ -68,7 +83,7 @@ export const App = () => {
 
           {/* ✅ Only allow admins to access user management */}
           <Route
-            path="admin/users"
+            path="/admin/users"
             element={
               <AdminRoute>
                 <ManageUsers />

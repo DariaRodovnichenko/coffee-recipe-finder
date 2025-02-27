@@ -15,7 +15,7 @@ export const AdminPanel = () => {
   return (
     <div>
       <h2>Admin Dashboard</h2>
-
+      
       {/* ✅ Recipe Creation Form */}
       <h3>Create Public Recipe</h3>
       <AdminForm onAdd={addRecipe} />

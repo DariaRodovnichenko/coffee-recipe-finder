@@ -1,17 +1,22 @@
+import { useEffect } from "react";
 import { useManageUsers } from "../../hooks/useManageUsers.js";
 import { useSelector } from "react-redux";
 import { DeleteBtn, UserItem, UserList } from "./ManageUsers.styled.js";
 import { useNavigate } from "react-router-dom";
 
 export const ManageUsers = () => {
-  console.log("🔵 [ManageUsers] Component Mounted");
+  console.log("🟢 ManageUsers Component Mounted");
 
   const { users, loading, error, deleteUser } = useManageUsers();
   const { isAdmin } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
-  console.log("👑 [ManageUsers] Admin Status from Redux:", isAdmin);
-  console.log("👀 [ManageUsers] Rendered Users:", users);
+  useEffect(() => {
+    console.log("useEffect triggered in ManageUsers.js");
+  }, []);
+
+  console.log("👑 Admin Status from Redux:", isAdmin);
+  console.log("👀 Rendered Users:", users);
 
   return (
     <div>
@@ -21,25 +26,19 @@ export const ManageUsers = () => {
       {!isAdmin ? (
         <p>❌ You do not have permission to view this page.</p>
       ) : loading ? (
-        <p>⏳ Loading users...</p>
+        <p>Loading users...</p>
       ) : error ? (
-        <p>❌ {error}</p>
+        <p>Error: {error}</p>
       ) : users.length === 0 ? (
-        <p>⚠️ No users found.</p>
+        <p>No users found.</p>
       ) : (
         <UserList>
           {users.map((user) => (
             <UserItem key={user.uid}>
-              {" "}
-              {/* ✅ Use `uid` instead of `id` */}
               <span>
                 {user.username || "Unnamed User"} ({user.email})
               </span>
-              <DeleteBtn onClick={() => deleteUser(user.uid)}>
-                {" "}
-                {/* ✅ Use `uid` */}
-                Delete
-              </DeleteBtn>
+              <DeleteBtn onClick={() => deleteUser(user.uid)}>Delete</DeleteBtn>
             </UserItem>
           ))}
         </UserList>

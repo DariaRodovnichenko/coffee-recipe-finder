@@ -1,16 +1,27 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { getDatabase, ref, get } from "firebase/database";
+import { setAdminStatus } from "./authSlice.js"; // Import Redux action
 
 export const checkAdminStatus = createAsyncThunk(
   "auth/checkAdminStatus",
-  async (uid, { rejectWithValue }) => {
+  async (uid, { rejectWithValue, dispatch }) => {
     try {
+      console.log(`🔍 Checking admin status for UID: ${uid}`);
       const db = getDatabase();
-      const userRef = ref(db, `users/${uid}/role`); // ✅ Check role inside the user profile
+      const userRef = ref(db, `users/${uid}/role`);
       const snapshot = await get(userRef);
-      return snapshot.exists() && snapshot.val() === "admin"; // ✅ Only return true if role is "admin"
+
+      if (snapshot.exists() && snapshot.val() === "admin") {
+        console.log("✅ Admin confirmed!");
+        dispatch(setAdminStatus(true));
+        return true; // ✅ Return true for Redux
+      }
+
+      console.warn("❌ Not an admin!");
+      dispatch(setAdminStatus(false));
+      return false;
     } catch (error) {
-      console.error("Error checking admin status:", error);
+      console.error("🚨 Error checking admin status:", error);
       return rejectWithValue(error.message);
     }
   }
