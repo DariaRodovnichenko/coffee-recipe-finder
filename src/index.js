@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { ThemeProvider } from "styled-components";
 import { BrowserRouter } from "react-router-dom";
-import { App } from "./components/App.js";
+import { App } from "./App.js";
 import { Provider } from "react-redux";
 import store from "./redux/authentication/store.js";
 

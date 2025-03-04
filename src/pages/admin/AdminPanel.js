@@ -1,8 +1,9 @@
 import { useAdminRecipes } from "../../hooks/useAdminRecipes.js";
-import { AdminForm } from "../../components/AdminForm/AdminForm.js";
+import { AdminForm } from "../../components/RecipeForm/AdminForm.js";
 import { Loader } from "../../components/Loader/Loader.js";
 import { useAdminStatus } from "../../hooks/useAdminStatus.js";
 import { useNavigate } from "react-router-dom";
+import { AdminBtn, AdminPanelWrapper, AdminSubtitle, AdminTitle, ErrorMessage } from "./AdminPanel.styled.js";
 
 export const AdminPanel = () => {
   const navigate = useNavigate();
@@ -13,17 +14,17 @@ export const AdminPanel = () => {
   if (!isAdmin) return <p>❌ Access Denied. You are not an admin.</p>;
 
   return (
-    <div>
-      <h2>Admin Dashboard</h2>
-      
+    <AdminPanelWrapper>
+      <AdminTitle>Admin Dashboard</AdminTitle>
+
       {/* ✅ Recipe Creation Form */}
-      <h3>Create Public Recipe</h3>
+      <AdminSubtitle>Create Public Recipe</AdminSubtitle>
       <AdminForm onAdd={addRecipe} />
       {recipesLoading && <Loader />}
-      {error && <div>❌ ERROR: {error}</div>}
+      {error && <ErrorMessage>❌ ERROR: {error}</ErrorMessage>}
 
       {/* ✅ Button to Navigate to Manage Users */}
-      <button onClick={() => navigate("/admin/users")}>Manage Users</button>
-    </div>
+      <AdminBtn onClick={() => navigate("/admin/users")}>Manage Users</AdminBtn>
+    </AdminPanelWrapper>
   );
 };

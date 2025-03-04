@@ -1,10 +1,6 @@
 import { Formik } from "formik";
 import * as Yup from "yup";
-import {
-  StyledField,
-  StyledForm,
-  ErrorMsg,
-} from "../RecipeForm/RecipeForm.styled.js";
+import { StyledField, StyledForm, ErrorMsg } from "./RecipeForm.styled.js";
 
 const RecipeSchema = Yup.object().shape({
   name: Yup.string()

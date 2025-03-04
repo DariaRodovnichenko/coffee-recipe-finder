@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { Loader } from "../../components/Loader/Loader.js";
 import { RecipeCard } from "../../components/RecipeCard/RecipeCard.js";
 import { useUserData } from "../../hooks/useUserData.js";
-import { RecipeForm } from "../../components/RecipeForm/RecipeForm.js";
+import { UserRecipeForm } from "../../components/RecipeForm/UserRecipeForm.js";
 import {
   RecipeList,
   Wrapper,
   RecipeCardNew,
   PlusIcon,
   RecipeFormWrapper,
+  RecipeCardBase,
 } from "./UserPage.styled.js";
 import toast from "react-hot-toast";
 
@@ -50,22 +51,6 @@ export const UserPage = () => {
     try {
       await removeUserRecipe(keyToRemove, isFavorite);
       console.log(`✅ Successfully removed recipe: ${recipeId}`);
-
-      // ✅ **Ensure UI Updates Before Closing Modal**
-      // setUserData((prevData) => {
-      //   if (!prevData) return prevData;
-
-      //   const updatedUserData = { ...prevData }; // Copy entire userData object
-      //   if (isFavorite) {
-      //     updatedUserData.favorites = { ...prevData.favorites };
-      //     delete updatedUserData.favorites[keyToRemove]; // Remove the favorite
-      //   } else {
-      //     updatedUserData.createdRecipes = { ...prevData.createdRecipes };
-      //     delete updatedUserData.createdRecipes[keyToRemove]; // Remove the created recipe
-      //   }
-
-      //   return updatedUserData; // ✅ React will detect the change
-      // });
 
       setUserData((prevData) => {
         console.log(prevData);
@@ -118,7 +103,7 @@ export const UserPage = () => {
 
         {isCreating && (
           <RecipeFormWrapper>
-            <RecipeForm
+            <UserRecipeForm
               onSubmit={async (newRecipe) => {
                 if (!newRecipe) {
                   toast.error("Something went wrong. Please try again.");
@@ -143,11 +128,13 @@ export const UserPage = () => {
 
         {userData?.createdRecipes &&
           Object.entries(userData.createdRecipes).map(([key, recipe]) => (
-            <RecipeCard
-              key={key}
-              recipe={recipe}
-              onDelete={(recipeId) => handleRemoveUserRecipe(recipeId, false)}
-            />
+            <RecipeCardBase key={key}>
+              <RecipeCard
+                // key={key}
+                recipe={recipe}
+                onDelete={(recipeId) => handleRemoveUserRecipe(recipeId, false)}
+              />
+            </RecipeCardBase>
           ))}
       </RecipeList>
 
@@ -155,11 +142,14 @@ export const UserPage = () => {
       <RecipeList>
         {userData?.favorites &&
           Object.entries(userData.favorites).map(([key, recipe]) => (
-            <RecipeCard
-              key={key}
-              recipe={recipe}
-              onDelete={(recipeId) => handleRemoveUserRecipe(recipeId, true)}
-            />
+            <RecipeCardBase key={key}>
+              {" "}
+              <RecipeCard
+                // key={key}
+                recipe={recipe}
+                onDelete={(recipeId) => handleRemoveUserRecipe(recipeId, true)}
+              />
+            </RecipeCardBase>
           ))}
       </RecipeList>
     </Wrapper>

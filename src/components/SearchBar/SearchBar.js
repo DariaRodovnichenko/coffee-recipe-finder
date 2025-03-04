@@ -1,6 +1,7 @@
 import { useQueryParams } from "../../hooks/useQueryParams.js";
-import { MethodFilter } from "../MethodFilter.js";
-import { YearFilter } from "../YearFilter.js";
+import { MethodFilter } from "../Filters/MethodFilter.js";
+import { YearFilter } from "../Filters/YearFilter.js";
+import { SearchBtn, SearchContainer } from "./SearchBar.styled.js";
 
 export const SearchBar = ({ onSearch }) => {
   const { resetFilters } = useQueryParams();
@@ -11,15 +12,15 @@ export const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <div>
+    <SearchContainer>
       <MethodFilter />
       <YearFilter />
-      <button type="button" onClick={handleSearch}>
+      <SearchBtn type="button" onClick={handleSearch}>
         Search
-      </button>
-      <button type="button" onClick={resetFilters}>
+      </SearchBtn>
+      <SearchBtn type="button" onClick={resetFilters}>
         Reset filters
-      </button>
-    </div>
+      </SearchBtn>
+    </SearchContainer>
   );
 };

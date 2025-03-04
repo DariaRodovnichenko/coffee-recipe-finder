@@ -1,6 +1,15 @@
 import { Outlet } from "react-router-dom";
 import Modal from "react-modal";
-import { Wrapper, StyledLink, LoginBtn } from "./Layout.styled.js";
+import {
+  StyledLink,
+  LoginBtn,
+  NavBar,
+  RightNav,
+  LeftNav,
+  ModalOverlay,
+  LoginModal,
+  CloseButton,
+} from "./Layout.styled.js";
 import { AuthForm } from "../AuthForm/AuthForm.js";
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -38,46 +47,42 @@ export const Layout = () => {
   }, [user, dispatch]);
 
   return (
-    <Wrapper>
+    <>
       <header>
-        <ul>
-          <li>
+        <NavBar>
+          <LeftNav>
             <StyledLink to="/recipes" end>
-              Recipe list
+              Home
             </StyledLink>
-          </li>
+          </LeftNav>
 
-          {/* ✅ Conditionally render "My Page" only if user is logged in */}
-          {user && !isAdmin && (
-            <li>
+          <RightNav>
+            {user && !isAdmin && (
               <StyledLink to="/my-recipes" end>
                 My Page
               </StyledLink>
-            </li>
-          )}
+            )}
 
-          {/* ✅ Show Admin Panel link only if user is logged in and is an admin */}
-          {user && isAdmin && (
-            <li>
+            {user && isAdmin && (
               <StyledLink to="/admin" end>
                 Admin Panel
               </StyledLink>
-            </li>
-          )}
-        </ul>
+            )}
 
-        <LoginBtn
-          onClick={() => {
-            if (user) {
-              dispatch(logoutUser());
-              toast.success("Successfully logged out!");
-            } else {
-              setIsLoginModalOpen(true);
-            }
-          }}
-        >
-          {user ? "Log out" : "Log in"}
-        </LoginBtn>
+            <LoginBtn
+              onClick={() => {
+                if (user) {
+                  dispatch(logoutUser());
+                  toast.success("Successfully logged out!");
+                } else {
+                  setIsLoginModalOpen(true);
+                }
+              }}
+            >
+              {user ? "Log out" : "Log in"}
+            </LoginBtn>
+          </RightNav>
+        </NavBar>
       </header>
 
       {/* Login Modal */}
@@ -85,18 +90,25 @@ export const Layout = () => {
         isOpen={isLoginModalOpen}
         onRequestClose={() => setIsLoginModalOpen(false)}
         contentLabel="Login Form"
+        style={{ overlay: { backgroundColor: "transparent" } }}
       >
-        <AuthForm
-          isSignedUp={isSignedUp}
-          setIsSignedUp={setIsSignedUp}
-          setIsLoginModalOpen={setIsLoginModalOpen}
-        />
-        <button onClick={() => setIsLoginModalOpen(false)}>Close</button>
-        {error && <div style={{ color: "red" }}>{error}</div>}
+        <ModalOverlay>
+          <LoginModal>
+            <CloseButton onClick={() => setIsLoginModalOpen(false)}>
+              ✖
+            </CloseButton>
+            <AuthForm
+              isSignedUp={isSignedUp}
+              setIsSignedUp={setIsSignedUp}
+              setIsLoginModalOpen={setIsLoginModalOpen}
+            />
+            {error && <div style={{ color: "red" }}>{error}</div>}
+          </LoginModal>
+        </ModalOverlay>
       </Modal>
 
       <Outlet />
       <Toaster />
-    </Wrapper>
+    </>
   );
 };

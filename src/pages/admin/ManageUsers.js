@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useManageUsers } from "../../hooks/useManageUsers.js";
 import { useSelector } from "react-redux";
-import { DeleteBtn, UserItem, UserList } from "./ManageUsers.styled.js";
+import { BackBtn, DeleteBtn, ManageUsersWrapper, UserItem, UserList } from "./ManageUsers.styled.js";
 import { useNavigate } from "react-router-dom";
 
 export const ManageUsers = () => {
@@ -19,9 +19,9 @@ export const ManageUsers = () => {
   console.log("👀 Rendered Users:", users);
 
   return (
-    <div>
+    <ManageUsersWrapper>
       <h2>User Management</h2>
-      <button onClick={() => navigate("/admin")}>Back to Admin Panel</button>
+      <BackBtn onClick={() => navigate("/admin")}>Back to Admin Panel</BackBtn>
 
       {!isAdmin ? (
         <p>❌ You do not have permission to view this page.</p>
@@ -43,6 +43,6 @@ export const ManageUsers = () => {
           ))}
         </UserList>
       )}
-    </div>
+    </ManageUsersWrapper>
   );
 };

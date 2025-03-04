@@ -1,99 +1,58 @@
 import Modal from "react-modal";
 import styled from "styled-components";
 
+/* ✅ Recipe Card Container */
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 160px; // Set a minimum height for uniformity
-  max-height: 160px; // Optional: Prevent cards from being too tall
-  padding: 20px;
-  border: 1px solid #ddd;
+  min-height: 200px; /* ✅ Ensures equal height for all cards */
+  padding: 16px;
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  background: #1a1a1a; /* Dark theme */
+  box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.1);
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 
   &:hover {
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 12px rgba(255, 255, 255, 0.2);
   }
 `;
 
+/* ✅ Recipe Title */
 export const RecipeName = styled.h2`
-  margin-top: 0;
-  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #ff9d00;
 `;
 
-export const MetaWrapper = styled.div`
-  margin-top: 16px;
-  flex-grow: 1;
-  overflow: hidden;
-`;
-
-export const CloseBtn = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 4px;
-  margin: 0;
-  background-color: transparent;
-  border: none;
-  border-radius: 90px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-
-  :hover {
-    color: red;
-  }
-
-  svg {
-    display: block;
-    color: navy;
-  }
-`;
-
-export const CardModal = styled(Modal)`
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh; /* Ensures the modal does not exceed viewport height */
-  overflow-y: auto; /* Allows scrolling if content overflows */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  outline: none;
-
-  /* Ensure smooth scrolling behavior */
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-  }
-`;
-
-export const EditForm = styled.div`
+export const EditForm = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  background: #f8f9fa; /* Light gray background for clarity */
+  gap: 12px;
+  padding: 16px;
+  background: rgba(
+    255,
+    255,
+    255,
+    0.05
+  ); /* ✅ Slight transparency for modern look */
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 500px; /* ✅ Keeps form compact */
+  margin: 0 auto;
 `;
 
 export const EditLabel = styled.label`
   font-weight: bold;
-  color: #333;
+  color: white; /* ✅ Adjusted for dark theme */
   margin-bottom: 5px;
+  display: block;
 `;
 
 export const EditInput = styled.input`
@@ -101,11 +60,12 @@ export const EditInput = styled.input`
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
+  width: 100%;
   outline: none;
   transition: border 0.2s ease-in-out;
 
   &:focus {
-    border-color: #007bff; /* Highlight input on focus */
+    border-color: #ff9d00;
   }
 `;
 
@@ -114,22 +74,87 @@ export const EditTextarea = styled.textarea`
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
-  min-height: 80px;
+  min-height: 100px; /* ✅ Increased height for better readability */
   resize: vertical;
   outline: none;
   transition: border 0.2s ease-in-out;
 
   &:focus {
-    border-color: #007bff;
+    border-color: #ff9d00; /* ✅ Highlight input on focus */
   }
 `;
 
-export const EditBtnGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+/* ✅ Metadata Wrapper */
+export const MetaWrapper = styled.div`
+  font-size: 14px;
+  color: #ddd;
+  margin-top: 12px;
 `;
 
+/* ✅ Modal Styling */
+export const CardModal = styled(Modal)`
+  position: fixed !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  padding: 20px;
+  background: #292929; /* Slightly lighter background for contrast */
+  border-radius: 10px;
+  overflow-y: auto;
+  z-index: 99999 !important; /* ✅ Ensure modal stays on top */
+  box-shadow: 0px 10px 20px rgba(255, 255, 255, 0.5);
+  outline: none;
+  color: #f0f0f0;
+  position: relative;
+
+  h2 {
+    color: #ffc107 !important; /* ✅ Brighter yellow for headings */
+  }
+
+  p,
+  li,
+  strong {
+    color: #e0e0e0 !important; /* ✅ Lighter font for readability */
+  }
+`;
+
+/* ✅ New Wrapper to Ensure Proper Positioning */
+export const ModalContent = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+`;
+
+/* ✅ Close Button */
+export const CloseBtn = styled.button`
+  position: absolute !important;
+  top: 10px;
+  right: 10px; /* ✅ Keeps it in the top-right corner */
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.3s ease;
+  font-size: 24px;
+  color: white;
+  z-index: 10002 !important;
+
+  &:hover {
+    color: red;
+    transform: scale(1.2);
+  }
+
+  svg {
+    width: 32px;
+    height: 32px;
+  }
+`;
+
+/* ✅ Buttons inside the modal */
 export const SaveBtn = styled.button`
   background-color: #28a745;
   color: white;

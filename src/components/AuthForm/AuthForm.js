@@ -10,7 +10,7 @@ import {
 } from "../../redux/authentication/authOperations.js";
 
 import {
-  Error,
+  ErrorMsg,
   FormGroup,
   LogInBtn,
   LogInContainer,
@@ -110,10 +110,12 @@ export const AuthForm = ({
               id="username"
               name="username"
               placeholder="User name"
-              {...formik.getFieldProps("username")}
+              value={formik.values.username}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
             {formik.touched.username && formik.errors.username && (
-              <Error>{formik.errors.username}</Error>
+              <ErrorMsg>{formik.errors.username}</ErrorMsg>
             )}
           </FormGroup>
         )}
@@ -125,10 +127,12 @@ export const AuthForm = ({
             name="email"
             placeholder="Email"
             autoComplete="email"
-            {...formik.getFieldProps("email")}
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           />
           {formik.touched.email && formik.errors.email && (
-            <Error>{formik.errors.email}</Error>
+            <ErrorMsg>{formik.errors.email}</ErrorMsg>
           )}
         </FormGroup>
         <FormGroup>
@@ -140,7 +144,9 @@ export const AuthForm = ({
               name="password"
               placeholder="Password"
               autoComplete="current-password"
-              {...formik.getFieldProps("password")}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
             <TogglePasswordBtn
               type="button"
@@ -150,7 +156,7 @@ export const AuthForm = ({
             </TogglePasswordBtn>
           </PasswordWrapper>
           {formik.touched.password && formik.errors.password && (
-            <Error>{formik.errors.password}</Error>
+            <ErrorMsg>{formik.errors.password}</ErrorMsg>
           )}
         </FormGroup>
 
@@ -164,7 +170,9 @@ export const AuthForm = ({
                 id="confirmPassword"
                 name="confirmPassword"
                 placeholder="Confirm Password"
-                {...formik.getFieldProps("confirmPassword")}
+                value={formik.values.confirmPassword}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
               <TogglePasswordBtn
                 type="button"
@@ -175,7 +183,7 @@ export const AuthForm = ({
             </PasswordWrapper>
             {formik.touched.confirmPassword &&
               formik.errors.confirmPassword && (
-                <Error>{formik.errors.confirmPassword}</Error>
+                <ErrorMsg>{formik.errors.confirmPassword}</ErrorMsg>
               )}
           </FormGroup>
         )}

@@ -1,6 +1,6 @@
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { StyledField, StyledForm, ErrorMsg } from "./RecipeForm.styled.js";
+import { StyledField, StyledForm, ErrorMsg, StyledTextarea, FormBtn } from "./RecipeForm.styled.js";
 import { useUserData } from "../../hooks/useUserData.js";
 import toast from "react-hot-toast";
 import { useState } from "react";
@@ -25,7 +25,7 @@ const RecipeSchema = Yup.object().shape({
     .required("Required"),
 });
 
-export const RecipeForm = ({ onSubmit, onCancel }) => {
+export const UserRecipeForm = ({ onSubmit, onCancel }) => {
   const { addUserRecipe } = useUserData();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -116,7 +116,7 @@ export const RecipeForm = ({ onSubmit, onCancel }) => {
           />
           <ErrorMsg name="filter" component="div" />
 
-          <StyledField
+          <StyledTextarea
             as="textarea"
             name="ingredients"
             placeholder="Ingredients"
@@ -126,7 +126,7 @@ export const RecipeForm = ({ onSubmit, onCancel }) => {
           />
           <ErrorMsg name="ingredients" component="div" />
 
-          <StyledField
+          <StyledTextarea
             as="textarea"
             name="steps"
             placeholder="Steps"
@@ -136,13 +136,13 @@ export const RecipeForm = ({ onSubmit, onCancel }) => {
           />
           <ErrorMsg name="steps" component="div" />
 
-          <button type="submit" disabled={isSubmitting}>
+          <FormBtn type="submit" disabled={isSubmitting}>
             Submit
-          </button>
+          </FormBtn>
           {onCancel && (
-            <button type="button" onClick={onCancel} disabled={isSubmitting}>
+            <FormBtn type="button" onClick={onCancel} disabled={isSubmitting}>
               Cancel
-            </button>
+            </FormBtn>
           )}
         </StyledForm>
       )}

@@ -2,7 +2,10 @@ import styled from "styled-components";
 
 /* ✅ Wrapper */
 export const Wrapper = styled.div`
+  max-width: 900px;
+  margin: auto;
   padding: 20px;
+  color: white;
 `;
 
 /* ✅ Recipe List */
@@ -10,13 +13,14 @@ export const RecipeList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: center;
 `;
 
-/* ✅ Base Recipe Card for Both New & Existing Recipes */
+/* ✅ Base Recipe Card */
 export const RecipeCardBase = styled.div`
-  width: 200px; /* ✅ Ensure all cards are the same width */
-  height: 200px; /* ✅ Ensures same height */
-  background: #f9f9f9;
+  width: 200px;
+  height: 200px;
+  background: #1a1a1a;
   border-radius: 12px;
   padding: 16px;
   text-align: center;
@@ -24,8 +28,9 @@ export const RecipeCardBase = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.1);
   transition: transform 0.2s ease-in-out;
+  cursor: pointer;
 
   &:hover {
     transform: scale(1.05);
@@ -34,24 +39,22 @@ export const RecipeCardBase = styled.div`
 
 /* ✅ Recipe Card for Existing Recipes */
 export const RecipeCard = styled(RecipeCardBase)`
-  background: #ffffff; /* Normal card background */
-
+  background: #222;
 `;
 
 /* ✅ Special Card for "New Recipe" */
 export const RecipeCardNew = styled(RecipeCardBase)`
-  background: #e3f2fd; /* Light blue for contrast */
+  background: #e3f2fd;
   color: #0077cc;
   opacity: 0.5;
-  cursor: pointer;
-  border: 2px dashed #0077cc; /* ✅ Dashed border to make it distinct */
+  border: 2px dashed #0077cc;
 
   &:hover {
     background: #d1e8ff;
   }
 `;
 
-/* ✅ Plus Icon in "New Recipe" Card */
+/* ✅ Plus Icon */
 export const PlusIcon = styled.div`
   font-size: 3rem;
   font-weight: bold;

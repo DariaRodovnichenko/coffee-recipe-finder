@@ -1,9 +1,11 @@
-import { useQueryParams } from "../hooks/useQueryParams.js";
+import { useQueryParams } from "../../hooks/useQueryParams.js";
+import { FilterSelect, FilterWrapper } from "./Filters.styled.js";
 
 export const YearFilter = () => {
-    const { year, changeYear } = useQueryParams();
-    return (
-      <select
+  const { year, changeYear } = useQueryParams();
+  return (
+    <FilterWrapper>
+      <FilterSelect
         value={year}
         onChange={(e) => {
           changeYear(e.target.value);
@@ -18,6 +20,7 @@ export const YearFilter = () => {
         <option value="2022">2022</option>
         <option value="2021">2021</option>
         <option value="2020">2020</option>
-      </select>
-    );    
-}
+      </FilterSelect>
+    </FilterWrapper>
+  );
+};
