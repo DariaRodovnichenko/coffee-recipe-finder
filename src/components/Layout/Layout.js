@@ -6,9 +6,7 @@ import {
   NavBar,
   RightNav,
   LeftNav,
-  ModalOverlay,
-  LoginModal,
-  CloseButton,
+  CloseBtn,
 } from "./Layout.styled.js";
 import { AuthForm } from "../AuthForm/AuthForm.js";
 import { useEffect, useRef, useState } from "react";
@@ -71,12 +69,17 @@ export const Layout = () => {
 
             <LoginBtn
               onClick={() => {
+                console.log(
+                  "🔴 Login Button Clicked! isLoginModalOpen BEFORE:",
+                  isLoginModalOpen
+                );
                 if (user) {
                   dispatch(logoutUser());
                   toast.success("Successfully logged out!");
                 } else {
                   setIsLoginModalOpen(true);
                 }
+                console.log("🟢 isLoginModalOpen AFTER:", isLoginModalOpen);
               }}
             >
               {user ? "Log out" : "Log in"}
@@ -90,21 +93,18 @@ export const Layout = () => {
         isOpen={isLoginModalOpen}
         onRequestClose={() => setIsLoginModalOpen(false)}
         contentLabel="Login Form"
-        style={{ overlay: { backgroundColor: "transparent" } }}
+        className="LoginModal_Content"
+        overlayClassName="LoginModal_Overlay"
       >
-        <ModalOverlay>
-          <LoginModal>
-            <CloseButton onClick={() => setIsLoginModalOpen(false)}>
-              ✖
-            </CloseButton>
-            <AuthForm
-              isSignedUp={isSignedUp}
-              setIsSignedUp={setIsSignedUp}
-              setIsLoginModalOpen={setIsLoginModalOpen}
-            />
-            {error && <div style={{ color: "red" }}>{error}</div>}
-          </LoginModal>
-        </ModalOverlay>
+        <CloseBtn onClick={() => setIsLoginModalOpen(false)}>✖</CloseBtn>
+
+        <AuthForm
+          isSignedUp={isSignedUp}
+          setIsSignedUp={setIsSignedUp}
+          setIsLoginModalOpen={setIsLoginModalOpen}
+        />
+
+        {error && <div style={{ color: "red" }}>{error}</div>}
       </Modal>
 
       <Outlet />

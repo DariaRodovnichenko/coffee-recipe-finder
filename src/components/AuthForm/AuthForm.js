@@ -13,7 +13,6 @@ import {
   ErrorMsg,
   FormGroup,
   LogInBtn,
-  LogInContainer,
   LogInInput,
   LogInLbl,
   GoogleSignInBtn,
@@ -99,7 +98,7 @@ export const AuthForm = ({
   };
 
   return (
-    <LogInContainer>
+    <>
       <form onSubmit={formik.handleSubmit}>
         {/* Conditionally show user name field for SignUp */}
         {isSignedUp && (
@@ -209,6 +208,6 @@ export const AuthForm = ({
           ? "Already have an account? Log In"
           : "Don't have an account? Sign Up"}
       </ToggleFormBtn>
-    </LogInContainer>
+    </>
   );
 };

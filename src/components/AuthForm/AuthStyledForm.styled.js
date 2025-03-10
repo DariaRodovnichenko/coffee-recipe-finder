@@ -8,25 +8,6 @@ import {
 /* ✅ Reuse common styles */
 export { StyledForm, ErrorMsg, FormBtn };
 
-/* ✅ Auth Form Container */
-export const LogInContainer = styled.div`
-  width: 100%;
-  max-width: 360px;
-  margin: auto;
-  padding: 20px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
-  color: white;
-  text-align: center;
-
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000000 !important;
-`;
-
 /* ✅ Input Group Wrapper */
 export const FormGroup = styled.div`
   margin-bottom: 16px;
