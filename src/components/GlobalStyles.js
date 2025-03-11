@@ -14,7 +14,7 @@ export const GlobalStyle = createGlobalStyle`
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow: auto;
     position: relative;
   }
 
@@ -24,7 +24,7 @@ export const GlobalStyle = createGlobalStyle`
     font-family: 'Inter', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #0a0a0a; /* Match cosmic theme */
+    background-color: #0a0a0a;
     color: white;
   }
 
@@ -49,8 +49,8 @@ export const GlobalStyle = createGlobalStyle`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.8); /* Darker overlay */
-  backdrop-filter: blur(8px); /* Frosted glass effect */
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,5 +68,35 @@ export const GlobalStyle = createGlobalStyle`
   box-shadow: 0px 10px 30px rgba(255, 255, 255, 0.2);
   position: relative;
   z-index: 10000 !important;
+}
+
+/* ✅ Recipe Card Modal Overlay */
+.RecipeCardModal_Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999 !important;
+}
+
+/* ✅ Recipe Card Modal Content */
+.RecipeCardModal_Content {
+  background: rgba(19, 19, 19, 0.95);
+  padding: 36px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  text-align: left;
+  box-shadow: 0px 10px 30px rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 10000 !important;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 `;

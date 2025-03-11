@@ -172,11 +172,13 @@ export const RecipeCard = ({ recipe = {}, onDelete }) => {
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
         contentEditLabel="Recipe Details"
+        className="RecipeCardModal_Content"
+        overlayClassName="RecipeCardModal_Overlay"
       >
         <CloseBtn onClick={() => setModalIsOpen(false)}>
           <ImCancelCircle />
         </CloseBtn>
-        
+
         <ModalContent>
           <h2>{editMode ? "Edit Recipe" : name}</h2>
 
