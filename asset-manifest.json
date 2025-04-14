@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/coffee-recipe-finder/static/css/main.db317afe.css",
+    "main.js": "/coffee-recipe-finder/static/js/main.3d9ae342.js",
+    "index.html": "/coffee-recipe-finder/index.html",
+    "main.db317afe.css.map": "/coffee-recipe-finder/static/css/main.db317afe.css.map",
+    "main.3d9ae342.js.map": "/coffee-recipe-finder/static/js/main.3d9ae342.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.db317afe.css",
+    "static/js/main.3d9ae342.js"
+  ]
+}

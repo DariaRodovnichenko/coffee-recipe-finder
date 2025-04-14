@@ -1,0 +1,46 @@
+# 🚀 Ignore `node_modules` to reduce repository size
+node_modules/
+
+# 🏗️ Ignore build and cache folders
+dist/
+build/
+.cache/
+
+# 📜 Ignore log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ⚙️ Ignore OS-specific and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# 🔒 Ignore environment and secret files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*.local
+
+# 🚫 Ignore Firebase and sensitive credentials
+config/serviceAccountKey.json
+firebase-adminsdk.json
+C:/Users/daria/secure-keys/serviceAccountKey.json
+
+# 🔥 Ignore Firebase Functions dependencies (if using Firebase Functions)
+functions/node_modules/
+functions/.firebase/
+
+# 🔄 Ignore dependency lockfiles (if you prefer not to commit them)
+package-lock.json
+yarn.lock
+
+# 📄 Ignore miscellaneous generated files
+coverage/
+*.log
+*.gz
+*.zip
